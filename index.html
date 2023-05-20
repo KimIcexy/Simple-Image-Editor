@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CHỈNH SỬA ẢNH</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <h1>CHỈNH SỬA ẢNH</h1>
+
+    <div class="sidebar" style="right: 0;">
+        <button>Làm trơn</button>
+        <button>Biên cạnh</button>
+        <button>Làm xám</button>
+        <button>Chiếu sáng</button>
+        <button>Tương phản</button>
+        <button>Xoay ảnh</button>
+        <button>Cắt ảnh</button>
+        <button>Nét vẽ</button>
+        <button>Viết chữ</button>
+        <button>Đối xứng</button>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <div class="sidebar" style="left: 0;">
+        <label for="imageInput" id="customImageInput" class="customButton">Tải ảnh lên</label>
+        <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+        <button>Khôi phục gốc</button>
+        <button>Hoàn tác</button>
+        <button>Lặp lại</button>
+        <button id="downloadBtn">Lưu về máy</button>
+    </div>
+</body>
+
+</html>
+
+<script src="script.js"></script>

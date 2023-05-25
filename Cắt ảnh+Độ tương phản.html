@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web App Chỉnh sửa ảnh</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <input type="file" id="imageInput">
+  <canvas id="canvas"></canvas>
+  <div>
+    <label for="blurAmount">Làm trơn ảnh:</label>
+    <input type="range" id="blurAmount" min="0" max="10" step="0.1" value="0">
+  </div>
+  <div>
+    <label for="grayscale">Làm xám ảnh:</label>
+    <input type="checkbox" id="grayscale">
+  </div>
+  <div>
+    <label for="contrastAmount">Điều chỉnh độ tương phản:</label>
+    <input type="range" id="contrastAmount" min="0" max="2" step="0.1" value="1">
+  </div>
+  <div>
+    <label for="grayscale">Cắt ảnh:</label>
+    <input type="checkbox" id="grayscale">
+  </div>
+  <button onclick="applyFilters()">Áp dụng các bộ lọc</button>
+  <a id="downloadLink" href="#" download="edited_image.png">Tải ảnh đã chỉnh sửa</a>
+
+  <script>
+  // Khởi tạo các biến và context của canvas
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var imageInput = document.getElementById('imageInput');
+var downloadLink = document.getElementById('downloadLink');
+var img = new Image();
+
+var croppedImage = null;
+var currentImage = null;
+
+
+
+
+
+// Biến lưu trữ tọa độ khung cắt
+var startX, startY, endX, endY;
+var isDragging = false;
+
+// Sự kiện khi chuột được nhấn xuống trên canvas
+canvas.addEventListener('mousedown', function(e) {
+  startX = e.offsetX;
+  startY = e.offsetY;
+  isDragging = true;
+});
+
+// Sự kiện khi chuột được di chuyển trên canvas
+canvas.addEventListener('mousemove', function(e) {
+  if (isDragging) {
+    drawCropRect(startX, startY, e.offsetX, e.offsetY);
+  }
+});
+
+// Sự kiện khi chuột được nhấc lên trên canvas
+canvas.addEventListener('mouseup', function(e) {
+  if (isDragging) {
+    isDragging = false;
+    endX = e.offsetX;
+    endY = e.offsetY;
+    drawCropRect(startX, startY, endX, endY);
+    cropImage(startX, startY, endX, endY);
+  }
+});
+
+// Hàm vẽ khung cắt trên canvas
+function drawCropRect(x1, y1, x2, y2) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#ff0000';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+}
+// Hàm cắt ảnh dựa trên khung đã vẽ
+function cropImage(x1, y1, x2, y2) {
+    
+  var croppedWidth = x2 - x1;
+  var croppedHeight = y2 - y1;
+  var croppedData = ctx.getImageData(x1, y1, croppedWidth, croppedHeight);
+
+  // Đưa ảnh đã cắt vào canvas mới
+  var newCanvas = document.createElement('canvas');
+  var newCtx = newCanvas.getContext('2d');
+  newCanvas.width = croppedWidth;
+  newCanvas.height = croppedHeight;
+  newCtx.putImageData(croppedData, 0, 0);
+
+  // Lưu trữ ảnh đã cắt
+  croppedImage = new Image();
+  croppedImage.onload = function() {
+    // Áp dụng các tính năng chỉnh sửa cho ảnh đã cắt
+    applyFilters();
+  };
+  croppedImage.src = newCanvas.toDataURL();
+}
+// Sự kiện khi người dùng chọn ảnh
+imageInput.addEventListener('change', function(e) {
+var file = e.target.files[0];
+var reader = new FileReader();
+reader.onload = function(event) {
+  img.onload = function() {
+    // Đưa ảnh về kích thước phù hợp với khung hình
+    var maxDimension = Math.max(canvas.width, canvas.height);
+    var scaleFactor = maxDimension / Math.max(img.width, img.height);
+    var newWidth = img.width * scaleFactor;
+    var newHeight = img.height * scaleFactor;
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+
+    // Vẽ ảnh đã chỉnh kích thước lên canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+    // Cập nhật đường dẫn tải xuống ảnh đã chỉnh sửa
+    // downloadLink.href = canvas.toDataURL("image/png");
+  };
+  img.src = event.target.result;
+};
+reader.readAsDataURL(file);
+});
+
+
+
+
+
+
+
+
+
+// Áp dụng các tính năng chỉnh sửa ảnh
+function applyFilters() {
+  // Lấy giá trị các thuộc tính
+  var blurAmount = document.getElementById('blurAmount').value;
+  var grayscale = document.getElementById('grayscale').checked;
+  var contrastAmount = document.getElementById('contrastAmount').value;
+
+  // Đưa ảnh gốc lên canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+   // Kiểm tra nếu có ảnh đã cắt
+   if (croppedImage) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(croppedImage, 0, 0, canvas.width, canvas.height);
+  }
+
+  // 1. Làm trơn ảnh
+  ctx.filter = `blur(${blurAmount}px)`;
+
+  // 2. Làm xám ảnh (grayscale)
+  if (grayscale) {
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var pixels = imageData.data;
+
+    for (var i = 0; i < pixels.length; i += 4) {
+      var average = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+      pixels[i] = average;           // Kênh đỏ
+      pixels[i + 1] = average;       // Kênh xanh lá cây
+      pixels[i + 2] = average;       // Kênh xanh dương
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+  }
+  
+  // 3. Điều chỉnh độ tương phản
+  
+  var contrastFactor = (parseFloat(contrastAmount) + 255) / 255;
+  var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  var pixels = imageData.data;
+
+  for (var i = 0; i < pixels.length; i += 4) {
+    pixels[i] = clamp(contrastFactor * (pixels[i] - 128) + 128);             // Điều chỉnh kênh đỏ
+    pixels[i + 1] = clamp(contrastFactor * (pixels[i + 1] - 128) + 128);     // Điều chỉnh kênh xanh lá cây
+    pixels[i + 2] = clamp(contrastFactor * (pixels[i + 2] - 128) + 128);     // Điều chỉnh kênh xanh dương
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+// Sự kiện khi người dùng chọn ảnh
+imageInput.addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    img.onload = function() {
+
+      // Đưa ảnh về kích thước phù hợp với khung hình
+      var maxDimension = Math.max(canvas.width, canvas.height);
+      var scaleFactor = maxDimension / Math.max(img.width, img.height);
+      var newWidth = img.width * scaleFactor;
+      var newHeight = img.height * scaleFactor;
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      // Vẽ ảnh đã chỉnh kích thước lên canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+      // Áp dụng các tính năng khi người dùng thay đổi giá trị
+      applyFilters();
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+// Sự kiện khi người dùng nhấp vào liên kết tải xuống
+downloadLink.addEventListener('click', function() {
+  var imageURI = canvas.toDataURL('image/png');
+  downloadLink.href = imageURI;
+});
+// Sự kiện khi người dùng thay đổi giá trị của các thuộc tính
+var inputs = document.querySelectorAll('input[type="range"], input[type="checkbox"]');
+inputs.forEach(function(input) {
+  input.addEventListener('input', function() {
+    applyFilters();
+  });
+});
+
+// Sự kiện khi người dùng nhấp vào nút "Áp dụng các tính năng"
+var applyButton = document.querySelector('button');
+applyButton.addEventListener('click', function() {
+  applyFilters();
+});
+
+  </script>
+</body>
+</html>

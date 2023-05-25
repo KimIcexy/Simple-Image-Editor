@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web App Chỉnh sửa ảnh</title>
+  <style>
+    #canvas {
+      border: 1px solid #ccc;
+      width : 500; 
+      height : 500;
+    }
+  </style>
+</head>
+<body>
+  <input type="file" id="imageInput">
+  <canvas id="canvas"></canvas>
+  <div>
+    <label for="blurAmount">Làm trơn ảnh:</label>
+    <input type="range" id="blurAmount" min="0" max="10" step="0.1" value="0">
+  </div>
+  <div>
+    <label for="grayscale">Làm xám ảnh:</label>
+    <input type="checkbox" id="grayscale">
+  </div>
+  <button onclick="applyFilters()">Áp dụng các bộ lọc</button>
+  <a id="downloadLink" href="#" download="edited_image.png">Tải ảnh đã chỉnh sửa</a>
+
+  <script>
+  // Khởi tạo các biến và context của canvas
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var imageInput = document.getElementById('imageInput');
+var downloadLink = document.getElementById('downloadLink');
+var img = new Image();
+
+// Áp dụng các tính năng chỉnh sửa ảnh
+function applyFilters() {
+  // Lấy giá trị các thuộc tính
+  var blurAmount = document.getElementById('blurAmount').value;
+  var grayscale = document.getElementById('grayscale').checked;
+
+
+  // Đưa ảnh gốc lên canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  // 1. Làm trơn ảnh
+  ctx.filter = `blur(${blurAmount}px)`;
+
+  // 2. Làm xám ảnh (grayscale)
+  if (grayscale) {
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var pixels = imageData.data;
+
+    for (var i = 0; i < pixels.length; i += 4) {
+      var average = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+      pixels[i] = average;           // Kênh đỏ
+      pixels[i + 1] = average;       // Kênh xanh lá cây
+      pixels[i + 2] = average;       // Kênh xanh dương
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+}
+
+// Sự kiện khi người dùng chọn ảnh
+imageInput.addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    img.onload = function() {
+
+      // Đưa ảnh về kích thước phù hợp với khung hình
+      var maxDimension = Math.max(canvas.width, canvas.height);
+      var scaleFactor = maxDimension / Math.max(img.width, img.height);
+      var newWidth = img.width * scaleFactor;
+      var newHeight = img.height * scaleFactor;
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      // Vẽ ảnh đã chỉnh kích thước lên canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+      // Áp dụng các tính năng khi người dùng thay đổi giá trị
+      applyFilters();
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+// Sự kiện khi người dùng nhấp vào liên kết tải xuống
+downloadLink.addEventListener('click', function() {
+  var imageURI = canvas.toDataURL('image/png');
+  downloadLink.href = imageURI;
+});
+
+// Sự kiện khi người dùng thay đổi giá trị của các thuộc tính
+var inputs = document.querySelectorAll('input[type="range"], input[type="checkbox"]');
+inputs.forEach(function(input) {
+  input.addEventListener('input', function() {
+    applyFilters();
+  });
+});
+
+// Sự kiện khi người dùng nhấp vào nút "Áp dụng các tính năng"
+var applyButton = document.querySelector('button');
+applyButton.addEventListener('click', function() {
+  applyFilters();
+});
+  </script>
+</body>
+</html>

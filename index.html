@@ -13,23 +13,23 @@
         <button>Làm trơn</button>
         <button id="edgeBtn">Biên cạnh</button>
         <button>Làm xám</button>
-        <button>Chiếu sáng</button>
+        <button id="lightBtn">Chiếu sáng</button>
         <button>Tương phản</button>
-        <button>Xoay ảnh</button>
+        <button id="rotateBtn">Xoay ảnh</button>
         <button>Cắt ảnh</button>
-        <button>Nét vẽ</button>
+        <button id="drawBtn">Nét vẽ</button>
         <button>Viết chữ</button>
-        <button>Đối xứng</button>
+        <button id="flipBtn">Đối xứng</button>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
 
     <div class="sidebar" style="left: 0;">
-        <label for="imageInput" id="customImageInput" class="customButton">Tải ảnh lên</label>
-        <input type="file" id="imageInput" accept="image/*" style="display:none;" />
-        <button>Khôi phục gốc</button>
-        <button>Hoàn tác</button>
-        <button>Lặp lại</button>
+        <label for="uploadBtn" id="customUploadBtn" class="customBtn">Tải ảnh lên</label>
+        <input type="file" id="uploadBtn" accept="image/*" style="display:none;" />
+        <button id="resetBtn">Khôi phục gốc</button>
+        <button id="undoBtn">Hoàn tác</button>
+        <button id="redoBtn">Lặp lại</button>
         <button id="downloadBtn">Lưu về máy</button>
     </div>
 </body>

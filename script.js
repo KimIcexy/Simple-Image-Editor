@@ -1,12 +1,24 @@
+// Kích thước canvas tối đa
+const maxHeight = 600, maxWidth = 800;
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var uploadBtn = document.getElementById('imageInput');
-const maxHeight = 600, maxWidth = 800;
-var downloadBtn = document.getElementById('downloadBtn');
-var edgeBtn = document.getElementById('edgeBtn');
+// Ảnh gốc
+var orgImg = null;
+// Lịch sử chỉnh sửa (dùng để undo - hoàn tác)
+var editHis = [];
+// Lịch sử hoàn tác (dùng để redo - lặp lại)
+var undoHis = [];
 
+// Vẽ ảnh lên canvas
+function applyImage(img_data) {
+    canvas.width = img_data.width;
+    canvas.height = img_data.height;
+    context.putImageData(img_data, 0, 0);
+    editHis.push(img_data);
+}
 
-// Lắng nghe sự kiện khi tải ảnh lên
+// Tải ảnh lên
+var uploadBtn = document.getElementById('uploadBtn');
 uploadBtn.addEventListener('change', function (e) {
     var file = e.target.files[0];
     var reader = new FileReader();
@@ -30,42 +42,71 @@ uploadBtn.addEventListener('change', function (e) {
                 }
             }
 
-            // Vẽ ảnh lên canvas sau khi đã chuyển đổi kích thước
+            // Vẽ ảnh lên canvas
             canvas.width = width;
             canvas.height = height;
-            var context = canvas.getContext('2d');
             context.drawImage(img, 0, 0, width, height);
             canvas.style.display = "block";
+
+            // Đặt trạng thái gốc cho ảnh
+            orgImg = context.getImageData(0, 0, canvas.width, canvas.height);
+            editHis = [orgImg];
+            redoHis = [];
         };
         img.src = event.target.result;
     };
-
     reader.readAsDataURL(file);
 });
 
-// Lắng nghe sự kiện khi tải ảnh xuống
+// Tải ảnh về máy
+var downloadBtn = document.getElementById('downloadBtn');
 downloadBtn.addEventListener("click", function () {
     const dataURL = canvas.toDataURL();
     const a = document.createElement("a");
     a.href = dataURL;
-    a.download = "edited-image.png";
+    const orgName = uploadBtn.files[0].name;
+    var splitName = orgName.split('.');
+    const editName = splitName[0] + "-edited." + splitName[1];
+    a.download = editName;
     a.click();
 });
 
-// Lọc biên cạnh
-edgeBtn.addEventListener("click", function () {
-    // Lấy dữ liệu hình ảnh từ canvas
-    var img = context.getImageData(0, 0, canvas.width, canvas.height);
-    // Phát hiện biên cạnh của ảnh
-    var edgeImageData = new ImageData(detectEdges(img), canvas.width, canvas.height);
-    context.putImageData(edgeImageData, 0, 0);
+// Hoàn tác
+var undoBtn = document.getElementById('undoBtn');
+undoBtn.addEventListener('click', function () {
+    if (editHis.length > 1) {
+        var currImg = editHis.pop();
+        undoHis.push(currImg);
+        var prevImg = editHis[editHis.length - 1];
+        applyImage(prevImg);
+    }
 });
 
-// Phát hiện biên cạnh của ảnh
-function detectEdges(img) {
-    const data = img.data;
-    const width = img.width;
-    const height = img.height;
+// Lặp lại
+var redoBtn = document.getElementById('redoBtn');
+redoBtn.addEventListener('click', function () {
+    if (undoHis.length != 0) {
+        var nextImg = undoHis.pop();
+        editHis.push(nextImg);
+        applyImage(nextImg);
+    }
+});
+
+// Khôi phục gốc
+var resetBtn = document.getElementById('resetBtn');
+resetBtn.addEventListener('click', function () {
+    if (editHis.length > 1) {
+        applyImage(orgImg);
+        editHis = [orgImg];
+        undoHis = [];
+    }
+});
+
+// Phát hiện biên cạnh
+function detectEdges(img_data) {
+    const data = img_data.data;
+    const width = img_data.width;
+    const height = img_data.height;
 
     // Chuyển sang ảnh xám
     const grayscale = new Uint8ClampedArray(width * height * 4);
@@ -106,3 +147,20 @@ function detectEdges(img) {
     }
     return result;
 }
+
+var edgeBtn = document.getElementById('edgeBtn');
+edgeBtn.addEventListener("click", function () {
+    var img = context.getImageData(0, 0, canvas.width, canvas.height);
+    var edgeImageData = new ImageData(detectEdges(img), canvas.width, canvas.height);
+    applyImage(edgeImageData);
+});
+
+// Chiếu sáng
+
+// Xoay
+
+// Vẽ
+
+// Đối xứng
+
+

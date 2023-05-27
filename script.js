@@ -109,7 +109,7 @@ function grayscale(data, width, height) {
         avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
         for (let k = 0; k < 3; k++)
             grayscale[i + k] = avg;
-        grayscale[i + 3] = 255
+        grayscale[i + 3] = 255;
     }
     return grayscale;
 }
@@ -172,6 +172,18 @@ edgeBtn.addEventListener("click", function () {
 });
 
 // Chiếu sáng
+var lightBtn = document.getElementById('lightBtn');
+lightBtn.addEventListener('click', function () {
+    var img = context.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < img.data.length; i += 4) {
+        for (let k = 0; k < 3; k++)
+            img.data[i + k] += 20;
+        img.data[i + 3] = 255;
+    }
+    var resImgData = new ImageData(img.data, canvas.width, canvas.height);
+    context.putImageData(resImgData, 0, 0);
+    editHis.push(resImgData);
+});
 
 // Xoay
 

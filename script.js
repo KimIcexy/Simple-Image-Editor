@@ -78,7 +78,7 @@ undoBtn.addEventListener('click', function () {
         var currImg = editHis.pop();
         undoHis.push(currImg);
         var prevImg = editHis[editHis.length - 1];
-        applyImage(prevImg);
+        context.putImageData(prevImg, 0, 0);
     }
 });
 
@@ -88,7 +88,7 @@ redoBtn.addEventListener('click', function () {
     if (undoHis.length != 0) {
         var nextImg = undoHis.pop();
         editHis.push(nextImg);
-        applyImage(nextImg);
+        context.putImageData(nextImg, 0, 0);
     }
 });
 
@@ -96,10 +96,31 @@ redoBtn.addEventListener('click', function () {
 var resetBtn = document.getElementById('resetBtn');
 resetBtn.addEventListener('click', function () {
     if (editHis.length > 1) {
-        applyImage(orgImg);
+        context.putImageData(orgImg, 0, 0);
         editHis = [orgImg];
         undoHis = [];
     }
+});
+
+// Làm xám
+function grayscale(data, width, height) {
+    const grayscale = new Uint8ClampedArray(width * height * 4);
+    for (let i = 0; i < data.length; i += 4) {
+        avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        for (let k = 0; k < 3; k++)
+            grayscale[i + k] = avg;
+        grayscale[i + 3] = 255
+    }
+    return grayscale;
+}
+
+var grayBtn = document.getElementById('grayBtn');
+grayBtn.addEventListener('click', function () {
+    var img = context.getImageData(0, 0, canvas.width, canvas.height);
+    var gray = grayscale(img.data, img.width, img.height);
+    var grayImgData = new ImageData(gray, canvas.width, canvas.height);
+    context.putImageData(grayImgData, 0, 0);
+    editHis.push(grayImgData);
 });
 
 // Phát hiện biên cạnh
@@ -109,13 +130,7 @@ function detectEdges(img_data) {
     const height = img_data.height;
 
     // Chuyển sang ảnh xám
-    const grayscale = new Uint8ClampedArray(width * height * 4);
-    for (let i = 0; i < data.length; i += 4) {
-        avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        for (let k = 0; k < 3; k++)
-            grayscale[i + k] = avg;
-        grayscale[i + 3] = 255
-    }
+    const gray = grayscale(data, width, height);
 
     // Áp dụng bộ lọc Sobel để phát hiện biên cạnh
     const result = new Uint8ClampedArray(width * height * 4);
@@ -133,8 +148,8 @@ function detectEdges(img_data) {
                     const row = y + ky;
                     const col = x + kx;
                     let idx = row * step_y + col * 4;
-                    sumX += grayscale[idx] * sobelX[(kx + 1) * 3 + ky + 1];
-                    sumY += grayscale[idx] * sobelY[(kx + 1) * 3 + ky + 1];
+                    sumX += gray[idx] * sobelX[(kx + 1) * 3 + ky + 1];
+                    sumY += gray[idx] * sobelY[(kx + 1) * 3 + ky + 1];
                 }
             }
             // Lưu kết quả vào result
@@ -152,7 +167,8 @@ var edgeBtn = document.getElementById('edgeBtn');
 edgeBtn.addEventListener("click", function () {
     var img = context.getImageData(0, 0, canvas.width, canvas.height);
     var edgeImageData = new ImageData(detectEdges(img), canvas.width, canvas.height);
-    applyImage(edgeImageData);
+    context.putImageData(edgeImageData, 0, 0);
+    editHis.push(edgeImageData);
 });
 
 // Chiếu sáng

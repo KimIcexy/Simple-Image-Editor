@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CHỈNH SỬA ẢNH</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <h1>CHỈNH SỬA ẢNH</h1>
+
+    <div class="sidebar" style="right: 0;">
+        <div >
+            <label for="blurAmount">Làm trơn ảnh</label>
+            <input  type="range" id="blurAmount" min="0" max="10" step="0.1" value="0">
+          </div>
+        <button>Biên cạnh</button>
+        <div>
+            <label for="grayscale">Làm xám ảnh</label>
+            <input type="checkbox" id="grayscale">
+          </div>
+        <button>Chiếu sáng</button>
+        <div>
+            <label for="contrastAmount">Độ tương phản:</label>
+            <input type="range" id="contrastAmount" min="0" max="2" step="0.1" value="1">
+          </div>
+        <button>Xoay ảnh</button>
+        <div>
+            <label for="crop">Cắt ảnh</label>
+            <input type="checkbox" id="crop">
+          </div>
+        <button>Nét vẽ</button>
+        <button>Viết chữ</button>
+        <div>
+            <label for="text">Văn bản:</label>
+            <input type="text" id="text" placeholder="Nhập văn bản">
+          </div>
+          <div>
+            <label for="textColor">Màu sắc chữ:</label>
+            <input type="color" id="textColor" value="#000000">
+          </div>
+          <div>
+            <label for="fontSize">Kích thước chữ:</label>
+            <input type="number" id="fontSize" min="1" max="100" step="1" value="20">
+          </div>
+          <button onclick="addText()">Thêm chữ</button>
+          <button onclick="clearText()">Xóa văn bản</button>
+        <button>Đối xứng</button>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <div class="sidebar" style="left: 0;">
+        <label for="imageInput" id="customImageInput" class="customButton">Tải ảnh lên</label>
+        <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+        <button>Khôi phục gốc</button>
+        <button>Hoàn tác</button>
+        <button>Lặp lại</button>
+        <button id="downloadBtn">Lưu về máy</button>
+    </div>
+</body>
+
+</html>
+
+<script src="script.js"></script>

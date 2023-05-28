@@ -186,6 +186,21 @@ lightBtn.addEventListener('click', function () {
 });
 
 // Xoay
+function rotateImg(width, height, angle = 30) {
+    // Xoay canvas
+    context.translate(width / 2, height / 2);
+    context.rotate((angle * Math.PI) / 180);
+    context.drawImage(canvas, -width / 2, -height / 2);
+}
+
+var rotateBtn = document.getElementById('rotateBtn');
+rotateBtn.addEventListener('click', function () {
+    var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+    rotateImg(imgData.width, imgData.height);
+    // var resultImgData = new ImageData(result, canvas.width, canvas.height);
+    // context.putImageData(resultImgData, 0, 0);
+    // editHis.push(resultImgData);
+});
 
 // Vẽ
 

@@ -203,6 +203,63 @@ rotateBtn.addEventListener('click', function () {
 });
 
 // Vẽ
+document.addEventListener("DOMContentLoaded", function () {
+    var drawBtn = document.getElementById("drawBtn");
+    var isDrawing = false;
+
+    // Bắt sự kiện khi nhấn vào nút "Nét vẽ"
+    drawBtn.addEventListener("click", function () {
+        // Bắt sự kiện khi nhấn chuột trái trên canvas
+        canvas.addEventListener("mousedown", function (e) {
+            if (e.button === 0) { // Kiểm tra nút chuột nhấn là chuột trái
+                isDrawing = true;
+                startDrawing();
+            }
+        });
+    });
+
+    // Bắt sự kiện khi di chuyển chuột trên canvas
+    canvas.addEventListener("mousemove", function (e) {
+        if (isDrawing) { // Kiểm tra nếu đang giữ chuột trái
+            draw(e);
+        }
+    });
+
+    // Bắt sự kiện khi thả chuột trái khỏi canvas
+    canvas.addEventListener("mouseup", function (e) {
+        if (e.button === 0) { // Kiểm tra nút chuột nhả là chuột trái
+            isDrawing = false;
+            stopDrawing();
+        }
+    });
+
+    // Bắt sự kiện khi di chuột ra khỏi canvas
+    canvas.addEventListener("mouseout", function (e) {
+        if (e.button === 0) { // Kiểm tra nút chuột nhấn là chuột trái
+            isDrawing = false;
+            stopDrawing();
+        }
+    });
+
+
+    function startDrawing(e) {
+        if (!isDrawing) return;
+        context.beginPath();
+        context.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        context.lineTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+        context.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
+    }
+});
+
 
 // Đối xứng
 

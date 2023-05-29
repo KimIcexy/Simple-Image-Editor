@@ -186,20 +186,39 @@ lightBtn.addEventListener('click', function () {
 });
 
 // Xoay
-function rotateImg(width, height, angle = 30) {
-    // Xoay canvas
-    context.translate(width / 2, height / 2);
-    context.rotate((angle * Math.PI) / 180);
-    context.drawImage(canvas, -width / 2, -height / 2);
+function rotateImage(degrees) {
+    var radians = degrees * Math.PI / 180;
+
+    // Tạo một canvas tạm thời để chứa ảnh đã xoay
+    var tempCanvas = document.createElement("canvas");
+    var tempContext = tempCanvas.getContext("2d");
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+
+    // Di chuyển tâm canvas về giữa --> xoay ảnh xung quanh tâm
+    tempContext.translate(canvas.width / 2, canvas.height / 2);
+    tempContext.rotate(radians);
+
+    // Di chuyển tâm canvas trở lại vị trí ban đầu
+    tempContext.translate(-canvas.width / 2, -canvas.height / 2);
+
+    // Vẽ ảnh gốc lên canvas tạm
+    tempContext.drawImage(canvas, 0, 0);
+
+    // Xóa nội dung trên canvas cũ
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Vẽ ảnh đã xoay từ canvas tạm lên canvas gốc
+    context.drawImage(tempCanvas, 0, 0);
 }
 
-var rotateBtn = document.getElementById('rotateBtn');
-rotateBtn.addEventListener('click', function () {
-    var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-    rotateImg(imgData.width, imgData.height);
-    // var resultImgData = new ImageData(result, canvas.width, canvas.height);
-    // context.putImageData(resultImgData, 0, 0);
-    // editHis.push(resultImgData);
+// Bắt sự kiện khi nhấn vào nút "Xoay ảnh"
+var rotateBtn = document.getElementById("rotateBtn");
+rotateBtn.addEventListener("click", function () {
+    var degrees = prompt("Nhập góc xoay (độ):");
+    if (degrees) {
+        rotateImage(parseFloat(degrees));
+    }
 });
 
 // Vẽ
@@ -262,5 +281,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Đối xứng
+function flipImage() {
+    var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    var flippedData = context.createImageData(imageData);
 
+    for (var y = 0; y < canvas.height; y++) {
+        for (var x = 0; x < canvas.width; x++) {
+            var sourceIndex = (y * canvas.width + x) * 4;
+            var targetIndex = (y * canvas.width + (canvas.width - x - 1)) * 4;
 
+            flippedData.data[targetIndex] = imageData.data[sourceIndex];
+            flippedData.data[targetIndex + 1] = imageData.data[sourceIndex + 1];
+            flippedData.data[targetIndex + 2] = imageData.data[sourceIndex + 2];
+            flippedData.data[targetIndex + 3] = imageData.data[sourceIndex + 3];
+        }
+    }
+
+    context.putImageData(flippedData, 0, 0);
+}
+
+var flipBtn = document.getElementById("flipBtn");
+flipBtn.addEventListener("click", function () {
+    flipImage();
+});

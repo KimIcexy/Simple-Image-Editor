@@ -101,150 +101,168 @@ var undoHis = [];
 // CÁC NÚT CHỨC NĂNG
 {
     // Làm trơn
-    var blurSlider = document.getElementById('blurSlider');
-    blurSlider.addEventListener('change', function () {
-        context.filter = `blur(${blurSlider.value}px)`;
-        context.drawImage(canvas, 0, 0);
-        editHis.push(canvas.getImageData(0, 0, canvas.width, canvas.height));
-    });
+    {
+        var blurSlider = document.getElementById('blurSlider');
+        blurSlider.addEventListener('change', function () {
+            context.filter = `blur(${blurSlider.value}px)`;
+            context.drawImage(canvas, 0, 0);
+            editHis.push(canvas.getImageData(0, 0, canvas.width, canvas.height));
+        });
+    }
+
 
     // Làm xám
-    function GrayScale(data, width, height) {
-        const grayscale = new Uint8ClampedArray(width * height * 4);
-        for (let i = 0; i < data.length; i += 4) {
-            avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            for (let k = 0; k < 3; k++)
-                grayscale[i + k] = avg;
-            grayscale[i + 3] = 255;
+    {
+        function GrayScale(data, width, height) {
+            const grayscale = new Uint8ClampedArray(width * height * 4);
+            for (let i = 0; i < data.length; i += 4) {
+                avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                for (let k = 0; k < 3; k++)
+                    grayscale[i + k] = avg;
+                grayscale[i + 3] = 255;
+            }
+            return grayscale;
         }
-        return grayscale;
+        var grayBtn = document.getElementById('grayBtn');
+        grayBtn.addEventListener('click', function () {
+            img = context.getImageData(0, 0, canvas.width, canvas.height);
+            var gray = GrayScale(img.data, img.width, img.height);
+            var grayImgData = new ImageData(gray, canvas.width, canvas.height);
+            context.putImageData(grayImgData, 0, 0);
+            editHis.push(grayImgData);
+        });
     }
-    var grayBtn = document.getElementById('grayBtn');
-    grayBtn.addEventListener('click', function () {
-        img = context.getImageData(0, 0, canvas.width, canvas.height);
-        var gray = GrayScale(img.data, img.width, img.height);
-        var grayImgData = new ImageData(gray, canvas.width, canvas.height);
-        context.putImageData(grayImgData, 0, 0);
-        editHis.push(grayImgData);
-    });
+
 
     // Phát hiện biên cạnh
-    function DetectEdges(img_data) {
-        const data = img_data.data;
-        const width = img_data.width;
-        const height = img_data.height;
+    {
+        function DetectEdges(img_data) {
+            const data = img_data.data;
+            const width = img_data.width;
+            const height = img_data.height;
 
-        // Chuyển sang ảnh xám
-        const gray = GrayScale(data, width, height);
+            // Chuyển sang ảnh xám
+            const gray = GrayScale(data, width, height);
 
-        // Áp dụng bộ lọc Sobel để phát hiện biên cạnh
-        const result = new Uint8ClampedArray(width * height * 4);
-        const sobelX = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
-        const sobelY = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
-        const step_y = width * 4;
+            // Áp dụng bộ lọc Sobel để phát hiện biên cạnh
+            const result = new Uint8ClampedArray(width * height * 4);
+            const sobelX = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
+            const sobelY = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
+            const step_y = width * 4;
 
-        for (let x = 1; x < width - 1; x++) {
-            for (let y = 1; y < height - 1; y++) {
-                let sumX = 0;
-                let sumY = 0;
-                // Nhân tích chập với bộ lọc
-                for (let kx = -1; kx <= 1; kx++) {
-                    for (let ky = -1; ky <= 1; ky++) {
-                        const row = y + ky;
-                        const col = x + kx;
-                        let idx = row * step_y + col * 4;
-                        sumX += gray[idx] * sobelX[(kx + 1) * 3 + ky + 1];
-                        sumY += gray[idx] * sobelY[(kx + 1) * 3 + ky + 1];
+            for (let x = 1; x < width - 1; x++) {
+                for (let y = 1; y < height - 1; y++) {
+                    let sumX = 0;
+                    let sumY = 0;
+                    // Nhân tích chập với bộ lọc
+                    for (let kx = -1; kx <= 1; kx++) {
+                        for (let ky = -1; ky <= 1; ky++) {
+                            const row = y + ky;
+                            const col = x + kx;
+                            let idx = row * step_y + col * 4;
+                            sumX += gray[idx] * sobelX[(kx + 1) * 3 + ky + 1];
+                            sumY += gray[idx] * sobelY[(kx + 1) * 3 + ky + 1];
+                        }
                     }
+                    // Lưu kết quả vào result
+                    const magnitude = Math.sqrt(sumX * sumX + sumY * sumY);
+                    let idx = y * step_y + x * 4;
+                    for (let k = 0; k < 3; k++)
+                        result[idx + k] = magnitude;
+                    result[idx + 3] = 255;
                 }
-                // Lưu kết quả vào result
-                const magnitude = Math.sqrt(sumX * sumX + sumY * sumY);
-                let idx = y * step_y + x * 4;
-                for (let k = 0; k < 3; k++)
-                    result[idx + k] = magnitude;
-                result[idx + 3] = 255;
             }
+            return result;
         }
-        return result;
+        var edgeBtn = document.getElementById('edgeBtn');
+        edgeBtn.addEventListener("click", function () {
+            img = context.getImageData(0, 0, canvas.width, canvas.height);
+            var edgeImageData = new ImageData(DetectEdges(img), canvas.width, canvas.height);
+            context.putImageData(edgeImageData, 0, 0);
+            editHis.push(edgeImageData);
+        });
     }
-    var edgeBtn = document.getElementById('edgeBtn');
-    edgeBtn.addEventListener("click", function () {
-        img = context.getImageData(0, 0, canvas.width, canvas.height);
-        var edgeImageData = new ImageData(DetectEdges(img), canvas.width, canvas.height);
-        context.putImageData(edgeImageData, 0, 0);
-        editHis.push(edgeImageData);
-    });
+
 
     // Chiếu sáng
-    var lightSlider = document.getElementById('lightSlider');
-    lightSlider.addEventListener('change', function () {
-        img = context.getImageData(0, 0, canvas.width, canvas.height);
-        var data = img.data;
-        var value = Number(lightSlider.value);
+    {
+        var lightSlider = document.getElementById('lightSlider');
+        lightSlider.addEventListener('change', function () {
+            img = context.getImageData(0, 0, canvas.width, canvas.height);
+            var data = img.data;
+            var value = Number(lightSlider.value);
 
-        for (let i = 0; i < img.data.length; i += 4) {
-            for (let k = 0; k < 3; k++)
-                data[i + k] += value;
-        }
-        var resImgData = new ImageData(img.data, canvas.width, canvas.height);
-        context.putImageData(resImgData, 0, 0);
-        editHis.push(resImgData);
-    });
+            for (let i = 0; i < img.data.length; i += 4) {
+                for (let k = 0; k < 3; k++)
+                    data[i + k] += value;
+            }
+            var resImgData = new ImageData(img.data, canvas.width, canvas.height);
+            context.putImageData(resImgData, 0, 0);
+            editHis.push(resImgData);
+        });
 
-    // Tương phản
-    var contrastSlider = document.getElementById('contrastSlider');
-    contrastSlider.addEventListener('change', function () {
-        img = context.getImageData(0, 0, canvas.width, canvas.height);
-        var data = img.data;
-        var value = Number(contrastSlider.value);
-
-        for (let i = 0; i < img.data.length; i += 4) {
-            for (let k = 0; k < 3; k++)
-                data[i + k] *= value;
-        }
-        var resImgData = new ImageData(img.data, canvas.width, canvas.height);
-        context.putImageData(resImgData, 0, 0);
-        editHis.push(resImgData);
-    });
-
-    // Xoay
-    function RotateImage(degrees) {
-        var radians = degrees * Math.PI / 180;
-
-        // Tạo một canvas tạm thời để chứa ảnh đã xoay
-        var tempCanvas = document.createElement("canvas");
-        var tempContext = tempCanvas.getContext("2d");
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-
-        // Di chuyển tâm canvas về giữa --> xoay ảnh xung quanh tâm
-        tempContext.translate(canvas.width / 2, canvas.height / 2);
-        tempContext.rotate(radians);
-
-        // Di chuyển tâm canvas trở lại vị trí ban đầu
-        tempContext.translate(-canvas.width / 2, -canvas.height / 2);
-
-        // Vẽ ảnh gốc lên canvas tạm
-        tempContext.drawImage(canvas, 0, 0);
-
-        // Xóa nội dung trên canvas cũ
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Vẽ ảnh đã xoay từ canvas tạm lên canvas gốc
-        context.drawImage(tempCanvas, 0, 0);
     }
 
-    // Bắt sự kiện khi nhấn vào nút "Xoay ảnh"
-    var rotateBtn = document.getElementById("rotateBtn");
-    rotateBtn.addEventListener("click", function () {
-        var degrees = prompt("Nhập góc xoay (độ):");
-        if (degrees) {
-            RotateImage(parseFloat(degrees));
+    // Tương phản
+    {
+        var contrastSlider = document.getElementById('contrastSlider');
+        contrastSlider.addEventListener('change', function () {
+            img = context.getImageData(0, 0, canvas.width, canvas.height);
+            var data = img.data;
+            var value = Number(contrastSlider.value);
+
+            for (let i = 0; i < img.data.length; i += 4) {
+                for (let k = 0; k < 3; k++)
+                    data[i + k] *= value;
+            }
+            var resImgData = new ImageData(img.data, canvas.width, canvas.height);
+            context.putImageData(resImgData, 0, 0);
+            editHis.push(resImgData);
+        });
+    }
+
+
+    // Xoay
+    {
+        function RotateImage(degrees) {
+            var radians = degrees * Math.PI / 180;
+
+            // Tạo một canvas tạm thời để chứa ảnh đã xoay
+            var tempCanvas = document.createElement("canvas");
+            var tempContext = tempCanvas.getContext("2d");
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+
+            // Di chuyển tâm canvas về giữa --> xoay ảnh xung quanh tâm
+            tempContext.translate(canvas.width / 2, canvas.height / 2);
+            tempContext.rotate(radians);
+
+            // Di chuyển tâm canvas trở lại vị trí ban đầu
+            tempContext.translate(-canvas.width / 2, -canvas.height / 2);
+
+            // Vẽ ảnh gốc lên canvas tạm
+            tempContext.drawImage(canvas, 0, 0);
+
+            // Xóa nội dung trên canvas cũ
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Vẽ ảnh đã xoay từ canvas tạm lên canvas gốc
+            context.drawImage(tempCanvas, 0, 0);
         }
-    });
+
+        // Bắt sự kiện khi nhấn vào nút "Xoay ảnh"
+        var rotateBtn = document.getElementById("rotateBtn");
+        rotateBtn.addEventListener("click", function () {
+            var degrees = prompt("Nhập góc xoay (độ):");
+            if (degrees) {
+                RotateImage(parseFloat(degrees));
+            }
+        });
+    }
+
 
     // Vẽ
-    document.addEventListener("DOMContentLoaded", function () {
+    {
         var drawBtn = document.getElementById("drawBtn");
         var isDrawing = false;
 
@@ -299,9 +317,13 @@ var undoHis = [];
             isDrawing = false;
             editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
         }
-    });
+    }
+
 
     // Viết chữ
+    {
+
+    }
     // Mảng lưu trữ thông tin văn bản
     var textElements = [];
     var selectedTextIndex = -1;
@@ -349,6 +371,25 @@ var undoHis = [];
 
         textElements.push(textElement);
         drawTextElements();
+    }
+
+    // Hàm xóa văn bản khỏi canvas
+    function deleteText() {
+        if (selectedTextIndex !== -1) {
+            textElements.splice(selectedTextIndex, 1);
+            // selectedTextIndex = -1;
+            // drawTextElements();
+        }
+    }
+
+    // Hàm cập nhật tỷ lệ kích thước chữ
+    function updateTextScale() {
+        textScale = parseFloat(document.getElementById('fontSize').value) / 20;
+        drawTextElements();
+    }
+
+    function handleText() {
+        addText();
 
         // Sự kiện khi chuột được nhấn xuống trên canvas
         canvas.addEventListener('mousedown', function (e) {
@@ -380,26 +421,25 @@ var undoHis = [];
                 }
 
                 // Kiểm tra xem chuột có nằm trong vùng resize không
-                if (
-                    x >= textElement.x + textWidth - 5 &&
-                    x <= textElement.x + textWidth + 5 &&
-                    y >= textElement.y - textHeight - 5 &&
-                    y <= textElement.y + 5
-                ) {
-                    selectedTextIndex = index;
-                    isResizing = true;
-                    prevX = x;
-                    prevY = y;
-                    resizeIndex = index;
-                    isInsideText = true;
-                }
+                // if (
+                //     x >= textElement.x + textWidth - 5 &&
+                //     x <= textElement.x + textWidth + 5 &&
+                //     y >= textElement.y - textHeight - 5 &&
+                //     y <= textElement.y + 5
+                // ) {
+                //     selectedTextIndex = index;
+                //     isResizing = true;
+                //     prevX = x;
+                //     prevY = y;
+                //     resizeIndex = index;
+                //     isInsideText = true;
+                // }
             });
 
             // Kiểm tra xem chuột có nằm trong phạm vi khung bao chữ không
             if (!isInsideText) {
                 selectedTextIndex = -1;
             }
-            drawTextElements();
         });
 
 
@@ -418,58 +458,43 @@ var undoHis = [];
                 prevX = x;
                 prevY = y;
 
-                drawTextElements();
+                //drawTextElements();
             }
 
-            if (isResizing) {
-                var x = e.offsetX;
-                var y = e.offsetY;
+            // if (isResizing) {
+            //     var x = e.offsetX;
+            //     var y = e.offsetY;
 
-                var textElement = textElements[resizeIndex];
-                var textWidth = context.measureText(textElement.text).width;
-                var textHeight = textElement.fontSize * textScale;
+            //     var textElement = textElements[resizeIndex];
+            //     var textWidth = context.measureText(textElement.text).width;
+            //     var textHeight = textElement.fontSize * textScale;
 
-                var deltaX = x - prevX;
-                var deltaY = y - prevY;
+            //     var deltaX = x - prevX;
+            //     var deltaY = y - prevY;
 
-                if (resizeIndex === selectedTextIndex) {
-                    textElement.fontSize += deltaY / textScale;
-                } else {
-                    textElement.fontSize += (deltaX + deltaY) / textScale;
-                }
+            //     if (resizeIndex === selectedTextIndex) {
+            //         textElement.fontSize += deltaY / textScale;
+            //     } else {
+            //         textElement.fontSize += (deltaX + deltaY) / textScale;
+            //     }
 
-                prevX = x;
-                prevY = y;
+            //     prevX = x;
+            //     prevY = y;
 
-                drawTextElements();
-            }
+            //     drawTextElements();
+            // }
         });
 
         // Sự kiện khi chuột được nhả ra trên canvas
         canvas.addEventListener('mouseup', function () {
-            isDragging = false;
-            isResizing = false;
-            resizeIndex = -1;
+            if (isDragging = true) {
+                drawTextElements();
+                isDragging = false;
+                isResizing = false;
+                resizeIndex = -1;
+            }
         });
     }
-
-    // Hàm xóa văn bản khỏi canvas
-    function deleteText() {
-        if (selectedTextIndex !== -1) {
-            textElements.splice(selectedTextIndex, 1);
-            selectedTextIndex = -1;
-            drawTextElements();
-        }
-    }
-
-    // Hàm cập nhật tỷ lệ kích thước chữ
-    function updateTextScale() {
-        textScale = parseFloat(document.getElementById('fontSize').value) / 20;
-        drawTextElements();
-    }
-
-
-
 
 
     // Đối xứng

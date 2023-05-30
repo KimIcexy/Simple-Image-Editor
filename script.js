@@ -301,6 +301,176 @@ var undoHis = [];
         }
     });
 
+    // Viết chữ
+    // Mảng lưu trữ thông tin văn bản
+    var textElements = [];
+    var selectedTextIndex = -1;
+    var isDragging = false;
+    var isResizing = false;
+    var resizeIndex = -1;
+    var prevX;
+    var prevY;
+    var textScale = 1; // Tỷ lệ kích thước chữ
+
+    // Hàm vẽ tất cả các văn bản lên canvas
+    function drawTextElements() {
+        textElements.forEach(function (textElement, index) {
+            context.font = textElement.fontSize * textScale + 'px Arial';
+            context.fillStyle = textElement.color;
+            context.fillText(textElement.text, textElement.x, textElement.y);
+
+            // Vẽ khung bao chữ khi được chọn
+            if (index === selectedTextIndex) {
+                context.strokeStyle = 'red';
+                context.lineWidth = 2;
+                context.strokeRect(
+                    textElement.x,
+                    textElement.y - textElement.fontSize * textScale,
+                    context.measureText(textElement.text).width,
+                    textElement.fontSize * textScale
+                );
+            }
+        });
+    }
+
+    // Hàm thêm văn bản vào canvas
+    function addText() {
+        var text = document.getElementById('text').value;
+        var textColor = document.getElementById('textColor').value;
+        var fontSize = parseInt(document.getElementById('fontSize').value);
+
+        var textElement = {
+            text: text,
+            color: textColor,
+            fontSize: fontSize,
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        };
+
+        textElements.push(textElement);
+        drawTextElements();
+
+        // Sự kiện khi chuột được nhấn xuống trên canvas
+        canvas.addEventListener('mousedown', function (e) {
+            var x = e.offsetX;
+            var y = e.offsetY;
+
+            isDragging = false;
+            isResizing = false;
+            resizeIndex = -1;
+
+            var isInsideText = false;
+
+            // Kiểm tra xem chuột có nằm trong vùng chữ không
+            textElements.forEach(function (textElement, index) {
+                var textWidth = context.measureText(textElement.text).width;
+                var textHeight = textElement.fontSize * textScale;
+
+                if (
+                    x >= textElement.x &&
+                    x <= textElement.x + textWidth &&
+                    y >= textElement.y - textHeight &&
+                    y <= textElement.y
+                ) {
+                    selectedTextIndex = index;
+                    isDragging = true;
+                    prevX = x;
+                    prevY = y;
+                    isInsideText = true;
+                }
+
+                // Kiểm tra xem chuột có nằm trong vùng resize không
+                if (
+                    x >= textElement.x + textWidth - 5 &&
+                    x <= textElement.x + textWidth + 5 &&
+                    y >= textElement.y - textHeight - 5 &&
+                    y <= textElement.y + 5
+                ) {
+                    selectedTextIndex = index;
+                    isResizing = true;
+                    prevX = x;
+                    prevY = y;
+                    resizeIndex = index;
+                    isInsideText = true;
+                }
+            });
+
+            // Kiểm tra xem chuột có nằm trong phạm vi khung bao chữ không
+            if (!isInsideText) {
+                selectedTextIndex = -1;
+            }
+            drawTextElements();
+        });
+
+
+        // Sự kiện khi chuột được di chuyển trên canvas
+        canvas.addEventListener('mousemove', function (e) {
+            if (isDragging) {
+                var x = e.offsetX;
+                var y = e.offsetY;
+
+                var deltaX = x - prevX;
+                var deltaY = y - prevY;
+
+                textElements[selectedTextIndex].x += deltaX;
+                textElements[selectedTextIndex].y += deltaY;
+
+                prevX = x;
+                prevY = y;
+
+                drawTextElements();
+            }
+
+            if (isResizing) {
+                var x = e.offsetX;
+                var y = e.offsetY;
+
+                var textElement = textElements[resizeIndex];
+                var textWidth = context.measureText(textElement.text).width;
+                var textHeight = textElement.fontSize * textScale;
+
+                var deltaX = x - prevX;
+                var deltaY = y - prevY;
+
+                if (resizeIndex === selectedTextIndex) {
+                    textElement.fontSize += deltaY / textScale;
+                } else {
+                    textElement.fontSize += (deltaX + deltaY) / textScale;
+                }
+
+                prevX = x;
+                prevY = y;
+
+                drawTextElements();
+            }
+        });
+
+        // Sự kiện khi chuột được nhả ra trên canvas
+        canvas.addEventListener('mouseup', function () {
+            isDragging = false;
+            isResizing = false;
+            resizeIndex = -1;
+        });
+    }
+
+    // Hàm xóa văn bản khỏi canvas
+    function deleteText() {
+        if (selectedTextIndex !== -1) {
+            textElements.splice(selectedTextIndex, 1);
+            selectedTextIndex = -1;
+            drawTextElements();
+        }
+    }
+
+    // Hàm cập nhật tỷ lệ kích thước chữ
+    function updateTextScale() {
+        textScale = parseFloat(document.getElementById('fontSize').value) / 20;
+        drawTextElements();
+    }
+
+
+
+
 
     // Đối xứng
     function FlipImage() {

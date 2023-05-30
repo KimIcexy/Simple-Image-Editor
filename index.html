@@ -32,7 +32,25 @@
         <button id="rotateBtn">Xoay ảnh</button>
         <button>Cắt ảnh</button>
         <button id="drawBtn">Nét vẽ</button>
-        <button>Viết chữ</button>
+
+        <div>
+            <label for="text">Văn bản:</label>
+            <input type="text" id="text" placeholder="Nhập văn bản">
+        </div>
+        <div>
+            <label for="textColor">Màu sắc chữ:</label>
+            <input type="color" id="textColor" value="#000000">
+        </div>
+        <div>
+            <label for="fontSize">Kích thước chữ:</label>
+            <input type="number" id="fontSize" min="1" max="100" step="1" value="20" onchange="updateTextScale()">
+        </div>
+        <button onclick="addText()">Viết chữ</button>
+        <button onclick="deleteText()">Xóa văn bản</button>
+
+
+
+
         <button id="flipBtn">Đối xứng</button>
     </div>
 

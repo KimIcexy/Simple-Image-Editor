@@ -370,6 +370,8 @@ var undoHis = [];
 
             textElements.push(textElement);
             drawTextElements();
+            if (text != '')
+                editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
         }
 
         // Hàm xóa văn bản khỏi canvas

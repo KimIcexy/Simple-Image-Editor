@@ -457,6 +457,8 @@ var undoHis = [];
 
                     prevX = x;
                     prevY = y;
+
+                    // Vẽ lại ảnh cũ trước khi vẽ thêm text mới
                     context.putImageData(prevImgData, 0, 0);
                     drawTextElements();
                 }

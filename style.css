@@ -8,16 +8,6 @@ body {
     flex-direction: column;
     align-items: center;
 }
-/* CSS */
-#canvas {
-    border: 1px solid #000000;
-    cursor: move;
-  }
-  
-  #textControls {
-    margin-top: 10px;
-  }
-  
 
 .sidebar {
     width: 200px;
@@ -44,7 +34,7 @@ body {
     align-items: center;
 }
 
-.customButton {
+.customBtn {
     display: inline-block;
     padding: 10px 20px;
     background-color: gray;
@@ -57,6 +47,6 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.customButton:hover {
+.customBtn:hover {
     background-color: lightgray;
 }

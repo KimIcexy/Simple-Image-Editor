@@ -66,16 +66,23 @@ var undoHis = [];
         a.click();
     });
 
-    // Hoàn tác
-    var undoBtn = document.getElementById('undoBtn');
     undoBtn.addEventListener('click', function () {
         if (editHis.length > 1) {
             var currImg = editHis.pop();
             undoHis.push(currImg);
             var prevImg = editHis[editHis.length - 1];
+
+            // Kiểm tra kích thước ảnh prevImg với kích thước canvas hiện tại
+            if (prevImg.width !== canvas.width || prevImg.height !== canvas.height) {
+                // Cập nhật kích thước canvas
+                canvas.width = prevImg.width;
+                canvas.height = prevImg.height;
+            }
+
             context.putImageData(prevImg, 0, 0);
         }
     });
+
 
     // Lặp lại
     var redoBtn = document.getElementById('redoBtn');
@@ -91,6 +98,12 @@ var undoHis = [];
     var resetBtn = document.getElementById('resetBtn');
     resetBtn.addEventListener('click', function () {
         if (editHis.length > 1) {
+            // Kiểm tra kích thước ảnh prevImg với kích thước canvas hiện tại
+            if (orgImg.width !== canvas.width || orgImg.height !== canvas.height) {
+                // Cập nhật kích thước canvas
+                canvas.width = orgImg.width;
+                canvas.height = orgImg.height;
+            }
             context.putImageData(orgImg, 0, 0);
             editHis = [orgImg];
             undoHis = [];
@@ -260,6 +273,164 @@ var undoHis = [];
         });
     }
 
+    // Cắt
+    {
+        var cropRect = { x: 0, y: 0, width: 0, height: 0 };
+        var isCropping = false;
+        var cropRectVisible = false;
+
+        var cropBtn = document.getElementById('cropBtn');
+        cropBtn.addEventListener('click', function () {
+            isCropping = !isCropping;
+            if (isCropping) {
+                // Hiện con trỏ chuột để vẽ khung cắt
+                canvas.style.cursor = "crosshair";
+            } else {
+                // Ẩn con trỏ chuột
+                canvas.style.cursor = "default";
+
+                // Cắt ảnh theo khung
+                if (cropRect.width > 0 && cropRect.height > 0) {
+                    console.log(editHis)
+                    // var croppedCanvas = document.createElement('canvas');
+                    // var croppedContext = croppedCanvas.getContext('2d');
+                    // croppedCanvas.width = cropRect.width;
+                    // croppedCanvas.height = cropRect.height;
+                    // croppedContext.drawImage(canvas, cropRect.x, cropRect.y, cropRect.width, cropRect.height, 0, 0, cropRect.width, cropRect.height);
+                    // context.clearRect(0, 0, canvas.width, canvas.height); // Xóa ảnh gốc trên canvas
+                    // canvas.width = cropRect.width;
+                    // canvas.height = cropRect.height;
+                    // context.drawImage(croppedCanvas, 0, 0);
+                    // cropRect = { x: 0, y: 0, width: 0, height: 0 };
+                    // editHis.push(canvas.getImageData(0, 0, canvas.width, canvas.height));
+                }
+            }
+        });
+
+        var isMouseMoving = false;
+        var tempImg = null;
+
+        canvas.addEventListener('mousedown', function (e) {
+            if (isCropping) {
+                cropRect.x = e.clientX - canvas.getBoundingClientRect().left;
+                cropRect.y = e.clientY - canvas.getBoundingClientRect().top;
+
+                canvas.addEventListener('mousemove', onMouseMove);
+                canvas.addEventListener('mouseup', onMouseUp);
+
+                cropRectVisible = true;
+                tempImg = new Image();
+                tempImg.src = canvas.toDataURL(); // Lưu ảnh gốc vào biến tạm
+                isMouseMoving = true;
+            }
+        });
+
+
+        function onMouseMove(e) {
+            if (isMouseMoving) {
+                var currentX = e.clientX - canvas.getBoundingClientRect().left;
+                var currentY = e.clientY - canvas.getBoundingClientRect().top;
+                cropRect.width = currentX - cropRect.x;
+                cropRect.height = currentY - cropRect.y;
+
+                context.clearRect(0, 0, canvas.width, canvas.height); // Xóa canvas
+
+                context.drawImage(tempImg, 0, 0); // Vẽ lại ảnh gốc từ biến tạm
+
+                context.strokeStyle = 'red';
+                context.lineWidth = 2;
+                context.strokeRect(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
+            }
+        }
+
+        // function onMouseUp(e) {
+        //     if (cropRectVisible) {
+        //         var currentX = e.clientX - canvas.getBoundingClientRect().left;
+        //         var currentY = e.clientY - canvas.getBoundingClientRect().top;
+        //         cropRect.width = currentX - cropRect.x;
+        //         cropRect.height = currentY - cropRect.y;
+
+        //         context.drawImage(tempImg, 0, 0); // Vẽ lại ảnh gốc từ biến tạm
+
+        //         var centerX = cropRect.x + cropRect.width / 2;
+        //         var centerY = cropRect.y + cropRect.height / 2;
+        //         cropRect.x = centerX - cropRect.width / 2;
+        //         cropRect.y = centerY - cropRect.height / 2;
+
+        //         context.strokeStyle = 'red';
+        //         context.lineWidth = 2;
+        //         context.strokeRect(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
+
+        //         // Cắt ảnh theo khung
+        //         if (cropRect.width > 0 && cropRect.height > 0) {
+        //             var croppedCanvas = document.createElement('canvas');
+        //             var croppedContext = croppedCanvas.getContext('2d');
+        //             croppedCanvas.width = cropRect.width;
+        //             croppedCanvas.height = cropRect.height;
+        //             croppedContext.drawImage(tempImg, cropRect.x, cropRect.y, cropRect.width, cropRect.height, 0, 0, cropRect.width, cropRect.height);
+
+        //             context.clearRect(0, 0, canvas.width, canvas.height); // Xóa canvas
+        //             var canvasCenterX = canvas.width / 2 - cropRect.width / 2;
+        //             var canvasCenterY = canvas.height / 2 - cropRect.height / 2;
+        //             context.drawImage(croppedCanvas, canvasCenterX, canvasCenterY);
+        //         }
+
+        //         canvas.removeEventListener('mousemove', onMouseMove);
+        //         canvas.removeEventListener('mouseup', onMouseUp);
+
+        //         cropRectVisible = false;
+        //         isMouseMoving = false;
+
+        //     }
+        //     console.log(editHis.length);
+        // }
+        function onMouseUp(e) {
+            if (cropRectVisible) {
+                var currentX = e.clientX - canvas.getBoundingClientRect().left;
+                var currentY = e.clientY - canvas.getBoundingClientRect().top;
+                cropRect.width = currentX - cropRect.x;
+                cropRect.height = currentY - cropRect.y;
+
+                context.clearRect(0, 0, canvas.width, canvas.height); // Xóa canvas
+
+                context.drawImage(tempImg, 0, 0); // Vẽ lại ảnh gốc từ biến tạm
+
+                var centerX = cropRect.x + cropRect.width / 2;
+                var centerY = cropRect.y + cropRect.height / 2;
+                cropRect.x = centerX - cropRect.width / 2;
+                cropRect.y = centerY - cropRect.height / 2;
+
+                context.strokeStyle = 'red';
+                context.lineWidth = 2;
+                context.strokeRect(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
+
+                // Cắt ảnh theo khung
+                if (cropRect.width > 0 && cropRect.height > 0) {
+                    var croppedCanvas = document.createElement('canvas');
+                    var croppedContext = croppedCanvas.getContext('2d');
+                    croppedCanvas.width = cropRect.width;
+                    croppedCanvas.height = cropRect.height;
+                    croppedContext.drawImage(tempImg, cropRect.x, cropRect.y, cropRect.width, cropRect.height, 0, 0, cropRect.width, cropRect.height);
+
+                    // Xóa canvas
+                    context.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Cập nhật lại kích thước canvas
+                    canvas.width = cropRect.width;
+                    canvas.height = cropRect.height;
+
+                    // Vẽ ảnh đã cắt lên canvas
+                    context.drawImage(croppedCanvas, 0, 0);
+                }
+
+                canvas.removeEventListener('mousemove', onMouseMove);
+                canvas.removeEventListener('mouseup', onMouseUp);
+
+                cropRectVisible = false;
+                isMouseMoving = false;
+            }
+        }
+    }
 
     // Vẽ
     {

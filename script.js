@@ -407,6 +407,8 @@ var undoHis = [];
     {
         var drawBtn = document.getElementById("drawBtn");
         var isDrawing = false;
+        var colorInput = document.getElementById("drawColor");
+        var thicknessInput = document.getElementById("drawThick");
 
         // Bắt sự kiện khi nhấn vào nút "Nét vẽ"
         drawBtn.addEventListener("click", function () {
@@ -449,6 +451,8 @@ var undoHis = [];
 
         function draw(e) {
             if (!isDrawing) return;
+            context.strokeStyle = colorInput.value; // Lấy giá trị màu sắc từ input
+            context.lineWidth = thicknessInput.value; // Lấy giá trị độ dày từ input
             context.lineTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
             context.stroke();
         }

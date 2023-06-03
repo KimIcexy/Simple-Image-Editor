@@ -447,7 +447,7 @@ var undoHis = [];
                 isErasing = true;
         }
         function erase(e) {
-            if (!isErasing) return false;
+            if (!isErasing) return;
 
             // Tọa độ chuột hiện tại
             var mouseX = e.pageX - canvas.offsetLeft;
@@ -458,47 +458,28 @@ var undoHis = [];
             var pixelIndex = (mouseY * canvas.width + mouseX) * 4;
 
             // b1. Dò tìm ảnh trước đó
-            var erase_ability = false;
-
-            // while (true) {
-            //     for (let i = 0; i < 3; i++) {
-            //         // Nếu ảnh trước không cùng kích thước thì không thể khôi phục
-            //         if (prevImgData.data.width != canvas.width || prevImgData.data.height != canvas.height)
-            //             return false;
-            //         // Nếu ảnh trước đó khác giá trị ảnh hiện tại thì có thể khôi phục
-            //         if (imageData.data[pixelIndex + i] != prevImgData.data[pixelIndex + i]) {
-            //             erase_ability = true;
-            //             break;
-            //         }
-            //     }
-            //     if (!erase_ability) {
-            //         prevIndex--; // Quay lại ảnh trước đó nữa để kiểm tra
-            //         if (prevIndex < 0) break; // Khi đã duyệt hết các ảnh trong editHis
-            //     } else {
-            //         break;
-            //     }
-            // }
-
-            if (erase_ability) {
-                var eraserSize = parseInt(eraserSizeInput.value);
-                // Xóa nét vẽ trong vùng bán kính của cục tẩy
-                for (var i = -eraserSize; i <= eraserSize; i++) {
-                    for (var j = -eraserSize; j <= eraserSize; j++) {
-                        var x = mouseX + i;
-                        var y = mouseY + j;
-
-                        if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
-                            var pixelIndex = (y * canvas.width + x) * 4;
-                            for (let i = 0; i < 3; i++)
-                                imageData.data[pixelIndex + i] = prevImgData.data[pixelIndex + i];
-                        }
-                    }
-                }
-                context.putImageData(imageData, 0, 0); // Vẽ lại ảnh lên canvas
-                return true;
+            var prevIndex = 0;
+            let prevImgData = editHis[prevIndex];
+            while (prevImgData.width != canvas.width || prevImgData.height != canvas.height) {
+                prevImgData = editHis[++prevIndex];
             }
 
-            return false;
+            // b2. Xóa nét vẽ trong vùng bán kính của cục tẩy
+            var eraserSize = parseInt(eraserSizeInput.value);
+            for (var i = -eraserSize; i <= eraserSize; i++) {
+                for (var j = -eraserSize; j <= eraserSize; j++) {
+                    var x = mouseX + i;
+                    var y = mouseY + j;
+
+                    if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
+                        var pixelIndex = (y * canvas.width + x) * 4;
+                        for (let i = 0; i < 3; i++)
+                            imageData.data[pixelIndex + i] = prevImgData.data[pixelIndex + i];
+                    }
+                }
+            }
+            // Vẽ lại ảnh lên canvas
+            context.putImageData(imageData, 0, 0);
         }
         function stopErasing(e) {
             if (e.button === 0) {

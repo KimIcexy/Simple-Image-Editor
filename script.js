@@ -48,7 +48,6 @@ var undoHis = [];
                     orgImg = context.getImageData(0, 0, canvas.width, canvas.height);
                     editHis = [orgImg];
                     redoHis = [];
-                    console.log('upload img: ', editHis.length);
                 };
                 img.src = event.target.result;
             };
@@ -76,7 +75,6 @@ var undoHis = [];
     {
         var undoBtn = document.getElementById('undoBtn');
         undoBtn.addEventListener('click', function () {
-            console.log('before undo: ', editHis.length);
             if (editHis.length > 1) {
                 var currImg = editHis.pop();
                 undoHis.push(currImg);
@@ -92,7 +90,6 @@ var undoHis = [];
 
                 context.putImageData(prevImg, 0, 0);
             }
-            console.log('after undo: ', editHis.length);
         });
     }
 
@@ -306,7 +303,6 @@ var undoHis = [];
         cropBtn.addEventListener('click', function () {
             isCropping = !isCropping;
             if (isCropping) {
-                console.log('before crop: ', editHis.length);
                 // Hiện con trỏ chuột để vẽ khung cắt
                 canvas.style.cursor = "crosshair";
                 // Xử lý cắt ảnh theo khung
@@ -335,7 +331,6 @@ var undoHis = [];
                 var currentY = e.clientY - canvas.getBoundingClientRect().top;
                 cropRect.width = currentX - cropRect.x;
                 cropRect.height = currentY - cropRect.y;
-                console.log('mouse move: ', editHis.length);
                 context.clearRect(0, 0, canvas.width, canvas.height); // Xóa canvas
 
                 context.drawImage(tempImg, 0, 0); // Vẽ lại ảnh gốc từ biến tạm
@@ -347,7 +342,6 @@ var undoHis = [];
         }
         function onMouseUp(e) {
             if (cropRectVisible) {
-                console.log('when mouse up: ', editHis.length);
                 var currentX = e.clientX - canvas.getBoundingClientRect().left;
                 var currentY = e.clientY - canvas.getBoundingClientRect().top;
                 cropRect.width = currentX - cropRect.x;
@@ -389,9 +383,7 @@ var undoHis = [];
                     isCropping = false;
                     // Ẩn con trỏ chuột
                     canvas.style.cursor = "default";
-                    console.log('before push: ', editHis.length);
                     editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
-                    console.log('after push: ', editHis.length);
                 }
 
                 canvas.removeEventListener('mousemove', onMouseMove);
@@ -405,61 +397,114 @@ var undoHis = [];
 
     // Vẽ
     {
+        // Thêm
+        var isDrawing;
         var drawBtn = document.getElementById("drawBtn");
-        var isDrawing = false;
         var colorInput = document.getElementById("drawColor");
-        var thicknessInput = document.getElementById("drawThick");
+        var thicknessInput = document.getElementById("drawThickSelect");
 
-        // Bắt sự kiện khi nhấn vào nút "Nét vẽ"
         drawBtn.addEventListener("click", function () {
-            // Bắt sự kiện khi nhấn chuột trái trên canvas
-            canvas.addEventListener("mousedown", function (e) {
-                if (e.button === 0) { // Kiểm tra nút chuột nhấn là chuột trái
-                    isDrawing = true;
-                    startDrawing();
-                }
-            });
-            // Bắt sự kiện khi di chuyển chuột trên canvas
-            canvas.addEventListener("mousemove", function (e) {
-                if (isDrawing) { // Kiểm tra nếu đang giữ chuột trái
-                    draw(e);
-                }
-            });
-
-            // Bắt sự kiện khi thả chuột trái khỏi canvas
-            canvas.addEventListener("mouseup", function (e) {
-                if (e.button === 0) { // Kiểm tra nút chuột nhả là chuột trái
-                    isDrawing = false;
-                    stopDrawing();
-                }
-            });
-
-            // Bắt sự kiện khi di chuột ra khỏi canvas
-            canvas.addEventListener("mouseout", function (e) {
-                if (e.button === 0) { // Kiểm tra nút chuột nhấn là chuột trái
-                    isDrawing = false;
-                    stopDrawing();
-                }
-            });
+            canvas.removeEventListener("mousedown", startErasing);
+            canvas.addEventListener("mousedown", startDrawing);
+            canvas.addEventListener("mousemove", draw);
+            canvas.addEventListener("mouseup", stopDrawing);
         });
-
         function startDrawing(e) {
-            if (!isDrawing) return;
-            context.beginPath();
-            context.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+            if (e.button === 0) {
+                isDrawing = true;
+                context.beginPath();
+                context.moveTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
+            }
         }
-
         function draw(e) {
             if (!isDrawing) return;
-            context.strokeStyle = colorInput.value; // Lấy giá trị màu sắc từ input
-            context.lineWidth = thicknessInput.value; // Lấy giá trị độ dày từ input
+            context.strokeStyle = colorInput.value;
+            context.lineWidth = thicknessInput.options[thicknessInput.selectedIndex].value;
             context.lineTo(e.pageX - canvas.offsetLeft, e.pageY - canvas.offsetTop);
             context.stroke();
         }
+        function stopDrawing(e) {
+            if (e.button === 0) {
+                isDrawing = false;
+                editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
+            }
+        }
 
-        function stopDrawing() {
-            isDrawing = false;
-            editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
+        // Xóa
+        var isErasing;
+        var eraseBtn = document.getElementById("eraseBtn");
+        var eraserSizeInput = document.getElementById("eraseSizeSelect");
+
+        eraseBtn.addEventListener("click", function () {
+            canvas.removeEventListener("mousedown", startDrawing);
+            canvas.addEventListener("mousedown", startErasing);
+            canvas.addEventListener("mousemove", erase);
+            canvas.addEventListener("mouseup", stopErasing);
+        });
+
+        function startErasing(e) {
+            if (e.button === 0)
+                isErasing = true;
+        }
+        function erase(e) {
+            if (!isErasing) return false;
+
+            // Tọa độ chuột hiện tại
+            var mouseX = e.pageX - canvas.offsetLeft;
+            var mouseY = e.pageY - canvas.offsetTop;
+
+            // Lấy dữ liệu ảnh hiện tại
+            var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            var pixelIndex = (mouseY * canvas.width + mouseX) * 4;
+
+            // b1. Dò tìm ảnh trước đó
+            var erase_ability = false;
+
+            // while (true) {
+            //     for (let i = 0; i < 3; i++) {
+            //         // Nếu ảnh trước không cùng kích thước thì không thể khôi phục
+            //         if (prevImgData.data.width != canvas.width || prevImgData.data.height != canvas.height)
+            //             return false;
+            //         // Nếu ảnh trước đó khác giá trị ảnh hiện tại thì có thể khôi phục
+            //         if (imageData.data[pixelIndex + i] != prevImgData.data[pixelIndex + i]) {
+            //             erase_ability = true;
+            //             break;
+            //         }
+            //     }
+            //     if (!erase_ability) {
+            //         prevIndex--; // Quay lại ảnh trước đó nữa để kiểm tra
+            //         if (prevIndex < 0) break; // Khi đã duyệt hết các ảnh trong editHis
+            //     } else {
+            //         break;
+            //     }
+            // }
+
+            if (erase_ability) {
+                var eraserSize = parseInt(eraserSizeInput.value);
+                // Xóa nét vẽ trong vùng bán kính của cục tẩy
+                for (var i = -eraserSize; i <= eraserSize; i++) {
+                    for (var j = -eraserSize; j <= eraserSize; j++) {
+                        var x = mouseX + i;
+                        var y = mouseY + j;
+
+                        if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
+                            var pixelIndex = (y * canvas.width + x) * 4;
+                            for (let i = 0; i < 3; i++)
+                                imageData.data[pixelIndex + i] = prevImgData.data[pixelIndex + i];
+                        }
+                    }
+                }
+                context.putImageData(imageData, 0, 0); // Vẽ lại ảnh lên canvas
+                return true;
+            }
+
+            return false;
+        }
+        function stopErasing(e) {
+            if (e.button === 0) {
+                isErasing = false;
+                editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
+            }
         }
     }
 
@@ -475,7 +520,7 @@ var undoHis = [];
         var prevX;
         var prevY;
         var textScale = 1; // Tỷ lệ kích thước chữ
-        var prevImgData; // Ảnh trước khi thêm văn bản
+        var prevImgData;
 
         // Hàm vẽ tất cả các văn bản lên canvas
         function drawTextElements() {
@@ -642,7 +687,6 @@ var undoHis = [];
                 }
             });
         }
-
     }
 
     // Đối xứng

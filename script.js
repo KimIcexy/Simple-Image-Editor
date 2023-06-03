@@ -492,7 +492,6 @@ var undoHis = [];
 
     // Viết chữ
     {
-        // Mảng lưu trữ thông tin văn bản
         var textElements = [];
         var selectedTextIndex = -1;
         var isDragging = false;
@@ -500,17 +499,18 @@ var undoHis = [];
         var resizeIndex = -1;
         var prevX;
         var prevY;
-        var textScale = 1; // Tỷ lệ kích thước chữ
+        var textScale = 1;
         var prevImgData;
 
-        // Hàm vẽ tất cả các văn bản lên canvas
         function drawTextElements() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.putImageData(prevImgData, 0, 0);
+
             textElements.forEach(function (textElement, index) {
                 context.font = textElement.fontSize * textScale + 'px Arial';
                 context.fillStyle = textElement.color;
                 context.fillText(textElement.text, textElement.x, textElement.y);
 
-                // Vẽ khung bao chữ khi được chọn
                 if (index === selectedTextIndex) {
                     context.strokeStyle = 'red';
                     context.lineWidth = 2;
@@ -524,7 +524,6 @@ var undoHis = [];
             });
         }
 
-        // Hàm thêm văn bản vào canvas
         function addText() {
             var text = document.getElementById('text').value;
             var textColor = document.getElementById('textColor').value;
@@ -544,7 +543,6 @@ var undoHis = [];
                 editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
         }
 
-        // Hàm xóa văn bản khỏi canvas
         function deleteText() {
             if (selectedTextIndex !== -1) {
                 textElements.splice(selectedTextIndex, 1);
@@ -553,17 +551,21 @@ var undoHis = [];
             }
         }
 
-        // Hàm cập nhật tỷ lệ kích thước chữ
         function updateTextScale() {
             textScale = parseFloat(document.getElementById('fontSize').value) / 20;
             drawTextElements();
         }
 
+        function clearSelection() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.putImageData(prevImgData, 0, 0);
+            drawTextElements();
+        }
+
         function handleText() {
-            prevImgData = editHis[editHis.length - 1];
+            prevImgData = context.getImageData(0, 0, canvas.width, canvas.height);
             addText();
 
-            // Sự kiện khi chuột được nhấn xuống trên canvas
             canvas.addEventListener('mousedown', function (e) {
                 var x = e.offsetX;
                 var y = e.offsetY;
@@ -572,13 +574,12 @@ var undoHis = [];
                 isResizing = false;
                 resizeIndex = -1;
 
-                var isInsideText = false;
+                isInsideText = false; // Reset trạng thái
 
                 // Kiểm tra xem chuột có nằm trong vùng chữ không
                 textElements.forEach(function (textElement, index) {
                     var textWidth = context.measureText(textElement.text).width;
                     var textHeight = textElement.fontSize * textScale;
-
                     if (
                         x >= textElement.x &&
                         x <= textElement.x + textWidth &&
@@ -587,89 +588,61 @@ var undoHis = [];
                     ) {
                         selectedTextIndex = index;
                         isDragging = true;
-                        prevX = x;
-                        prevY = y;
+                        startX = x;
+                        startY = y;
                         isInsideText = true;
                     }
-
-                    // Kiểm tra xem chuột có nằm trong vùng resize không
-                    // if (
-                    //     x >= textElement.x + textWidth - 5 &&
-                    //     x <= textElement.x + textWidth + 5 &&
-                    //     y >= textElement.y - textHeight - 5 &&
-                    //     y <= textElement.y + 5
-                    // ) {
-                    //     selectedTextIndex = index;
-                    //     isResizing = true;
-                    //     prevX = x;
-                    //     prevY = y;
-                    //     resizeIndex = index;
-                    //     isInsideText = true;
-                    // }
                 });
 
-                // Kiểm tra xem chuột có nằm trong phạm vi khung bao chữ không
                 if (!isInsideText) {
                     selectedTextIndex = -1;
+                    clearSelection();
                 }
+
+                drawTextElements();
             });
 
-
-            // Sự kiện khi chuột được di chuyển trên canvas
             canvas.addEventListener('mousemove', function (e) {
-                if (isDragging) {
-                    var x = e.offsetX;
-                    var y = e.offsetY;
+                var x = e.offsetX;
+                var y = e.offsetY;
 
-                    var deltaX = x - prevX;
-                    var deltaY = y - prevY;
+                if (isDragging) {
+                    var deltaX = x - startX;
+                    var deltaY = y - startY;
+
+                    // Kiểm tra nếu văn bản đã di chuyển đi
+                    if (deltaX !== 0 || deltaY !== 0) {
+                        // Xóa chữ tại vị trí ban đầu
+                        context.clearRect(
+                            textElements[selectedTextIndex].x,
+                            textElements[selectedTextIndex].y - textElements[selectedTextIndex].fontSize * textScale,
+                            context.measureText(textElements[selectedTextIndex].text).width,
+                            textElements[selectedTextIndex].fontSize * textScale
+                        );
+                    }
 
                     textElements[selectedTextIndex].x += deltaX;
                     textElements[selectedTextIndex].y += deltaY;
 
-                    prevX = x;
-                    prevY = y;
+                    startX = x;
+                    startY = y;
 
-                    // Vẽ lại ảnh cũ trước khi vẽ thêm text mới
-                    context.putImageData(prevImgData, 0, 0);
+                    clearSelection();
                     drawTextElements();
                 }
-
-                // if (isResizing) {
-                //     var x = e.offsetX;
-                //     var y = e.offsetY;
-
-                //     var textElement = textElements[resizeIndex];
-                //     var textWidth = context.measureText(textElement.text).width;
-                //     var textHeight = textElement.fontSize * textScale;
-
-                //     var deltaX = x - prevX;
-                //     var deltaY = y - prevY;
-
-                //     if (resizeIndex === selectedTextIndex) {
-                //         textElement.fontSize += deltaY / textScale;
-                //     } else {
-                //         textElement.fontSize += (deltaX + deltaY) / textScale;
-                //     }
-
-                //     prevX = x;
-                //     prevY = y;
-
-                //     drawTextElements();
-                // }
             });
 
-            // Sự kiện khi chuột được nhả ra trên canvas
+
+
             canvas.addEventListener('mouseup', function () {
-                if (isDragging = true) {
-                    isDragging = false;
-                    isResizing = false;
-                    resizeIndex = -1;
-                }
+                isDragging = false;
+            });
+
+            canvas.addEventListener('mouseleave', function () {
+                isDragging = false;
             });
         }
     }
-
     // Đối xứng
     function FlipImage() {
         var imageData = context.getImageData(0, 0, canvas.width, canvas.height);

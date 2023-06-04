@@ -30,8 +30,34 @@
         </div>
 
         <button id="rotateBtn">Xoay ảnh</button>
+
         <button id="cropBtn">Cắt ảnh</button>
-        <button id="drawBtn">Nét vẽ</button>
+
+        <div>
+            <label for="drawColor">Màu sắc vẽ:</label>
+            <input type="color" id="drawColor" value="#FFFFFF">
+        </div>
+        <div>
+            <label for="drawThickSelect">Độ dày vẽ:</label>
+            <select id="drawThickSelect">
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+            </select>
+        </div>
+
+        <button id="drawBtn">Thực hiện vẽ</button>
+        <div>
+            <label for="eraseSizeSelect">Kích thước xóa:</label>
+            <select id="eraseSizeSelect">
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+            </select>
+        </div>
+        <button id="eraseBtn">Xóa nét vẽ</button>
 
         <div>
             <label for="text">Văn bản:</label>

@@ -4,88 +4,120 @@
 <head>
     <title>CHỈNH SỬA ẢNH</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/undo.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/repeat.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/software-download.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/sync.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/software-upload.css' rel='stylesheet'>
+
+
 </head>
 
 <body>
     <h1>CHỈNH SỬA ẢNH</h1>
+    <div class="control">
+        <label for="uploadBtn" id="customUploadBtn" class="customBtn-control"><i class="gg-software-upload"></i></label>
+        <input type="file" id="uploadBtn" accept="image/*" style="display:none;" />
+        <button id="resetBtn"class="customBtn-control"><i class="gg-sync"></i></button>
+        <button id="downloadBtn"class="customBtn-control"><i class="gg-software-download"></i></button>
+        <button id="undoBtn" class="customBtn-control"><i class="gg-undo"></i></button>
+        <button id="redoBtn" class="customBtn-control"><i class="gg-repeat"></i></button>
 
-    <div class="sidebar" style="right: 0;">
-        <div>
-            <label for="blurSlider">Làm trơn</label>
-            <input type="range" id="blurSlider" min="0" max="10" step="0.1" value="0">
-        </div>
-
-        <button id="edgeBtn">Biên cạnh</button>
-
-        <button id="grayBtn">Làm xám</button>
-
-        <div>
-            <label for="lightSlider">Chiếu sáng: </label>
-            <input type="range" id="lightSlider" min="-50" max="50" step="1" value="0">
-        </div>
-
-        <div>
-            <label for="contrastSlider">Tương phản:</label>
-            <input type="range" id="contrastSlider" min="0.01" max="2.01" step="0.01" value="1">
-        </div>
-
-        <button id="rotateBtn">Xoay ảnh</button>
-
-        <button id="cropBtn">Cắt ảnh</button>
-
-        <div>
-            <label for="drawColor">Màu sắc vẽ:</label>
-            <input type="color" id="drawColor" value="#FFFFFF">
-        </div>
-        <div>
-            <label for="drawThickSelect">Độ dày vẽ:</label>
-            <select id="drawThickSelect">
-                <option value="1">1</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-            </select>
-        </div>
-
-        <button id="drawBtn">Thực hiện vẽ</button>
-        <div>
-            <label for="eraseSizeSelect">Kích thước xóa:</label>
-            <select id="eraseSizeSelect">
-                <option value="1">1</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-            </select>
-        </div>
-        <button id="eraseBtn">Xóa nét vẽ</button>
-
-        <div>
-            <label for="text">Văn bản:</label>
-            <input type="text" id="text" placeholder="Nhập văn bản">
-        </div>
-        <div>
-            <label for="textColor">Màu sắc chữ:</label>
-            <input type="color" id="textColor" value="#FFFFFF">
-        </div>
-        <div>
-            <label for="fontSize">Kích thước chữ:</label>
-            <input type="number" id="fontSize" min="1" max="100" step="1" value="20" onchange="updateTextScale()">
-        </div>
-        <button onclick="handleText()">Viết chữ</button>
-        <button onclick="deleteText()">Xóa chữ</button>
-
-        <button id="flipBtn">Đối xứng</button>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
-
     <div class="sidebar" style="left: 0;">
-        <label for="uploadBtn" id="customUploadBtn" class="customBtn">Tải ảnh lên</label>
-        <input type="file" id="uploadBtn" accept="image/*" style="display:none;" />
-        <button id="resetBtn">Khôi phục gốc</button>
-        <button id="undoBtn">Hoàn tác</button>
-        <button id="redoBtn">Lặp lại</button>
-        <button id="downloadBtn">Lưu về máy</button>
+        <div class="function-group">
+            <div class="group-title" >Điều chỉnh</div>
+            <div class="group" id="adjustGroup">
+                <div class="function-wrapper">
+                    <div>
+                        <label for="blurSlider" class="text">Làm trơn: </label>
+                        <input type="range" id="blurSlider" min="0" max="10" step="0.1" value="0">
+                    </div>
+
+                    <div>
+                        <label for="lightSlider" class="text">Chiếu sáng: </label>
+                        <input type="range" id="lightSlider" min="-50" max="50" step="1" value="0">
+                    </div>
+                    <div>
+                        <label for="contrastSlider" class="text">Tương phản:</label>
+                        <input type="range" id="contrastSlider" min="0.01" max="2.01" step="0.01" value="1">
+                    </div>
+                    <button id="cropBtn" class="function-btn" >Cắt ảnh</button><br>
+                    <button id="rotateBtn" class="function-btn">Xoay ảnh</button><br>
+                    <button id="flipBtn" class="function-btn"style="margin-bottom: 5px;">Lật ảnh</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="function-group">
+            <div class="group-title">Bộ lọc</div>
+            <div class="group" id="filterGroup">
+                <div class="function-wrapper">
+                    <button id="grayBtn" class="function-btn" style="margin-bottom: 15px;">Làm xám</button>
+                    <button id="edgeBtn" class="function-btn" style="margin-bottom: 10px;">Biên cạnh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar" style="right: 0;">
+        <div class="function-group">
+            <div class="group-title">Viết chữ</div>
+            <div class="group" id="textGroup">
+                <div class="function-wrapper">
+                    <div>
+                        <label for="text" class="text">Văn bản:</label>
+                        <input type="text" id="text" placeholder="Nhập văn bản">
+                    </div>
+                    <div>
+                        <label for="textColor"class="text-vanban">Màu sắc chữ:</label>
+                        <input type="color" id="textColor" value="#FFFFFF">
+                    </div>
+                    <div>
+                        <label for="fontSize"class="text-vanban">Kích thước chữ:</label>
+                        <input type="number" id="fontSize" min="1" max="100" step="1" value="20" onchange="updateTextScale()">
+                    </div>
+                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn"  onclick="handleText()">Viết chữ</button>
+                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn"  onclick="deleteText()">Xóa chữ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="function-group">
+            <div class="group-title">Vẽ</div>
+            <div class="group" id="drawGroup">
+                <div class="function-wrapper">
+                    <div>
+                        <label for="drawColor" class="text-vanban">Màu sắc vẽ:</label>
+                        <input type="color" id="drawColor" value="#FFFFFF">
+                    </div>
+
+                    <div>
+                        <label for="drawThickSelect" class="text-vanban">Độ dày vẽ:</label>
+                        <select id="drawThickSelect">
+                            <option value="1">1</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </div>
+
+                    <button id="drawBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;" >Thực hiện vẽ</button>
+                    <div>
+                        <label for="eraseSizeSelect" class="text-vanban">Kích thước xóa:</label>
+                        <select id="eraseSizeSelect">
+                            <option value="1">1</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </div>
+                    <button id="eraseBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;">Xóa nét vẽ</button>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 

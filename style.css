@@ -1,7 +1,23 @@
 h1 {
-    margin-top: 0;
-    font-size: 24px;
+    position: absolute;
+    top: 0vh;
+    left: -0.5vw;
+    font-size: 30px;
+    animation: changeColor 5s infinite;
+    border: 2px solid yellowgreen;
+    padding: 10px;
+    margin: 20px;
+    background-color:lightgray;
 }
+
+  
+  @keyframes changeColor {
+    0% { color: red; }
+    25% { color: blue; }
+    50% { color: green; }
+    75% { color: orange; }
+    100% { color: purple; }
+  }
 
 body {
     display: flex;
@@ -9,10 +25,28 @@ body {
     align-items: center;
 }
 
+.control {
+    position: fixed;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 5vh;
+    right: 35vw;
+}
+
+#canvas {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .sidebar {
-    width: 200px;
-    background-color: lightgray;
+    width: 15vw;
     padding: 10px;
+    
 
     /*Căn chỉnh*/
     display: flex;
@@ -22,17 +56,18 @@ body {
     /*Vị trí*/
     position: fixed;
     height: 100%;
-    top: 0;
+
+    
 }
 
-#buttons {
+/* #buttons {
     margin-top: 20px;
     border: 1px solid gray;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
+} */
 
 .customBtn {
     display: inline-block;
@@ -46,7 +81,118 @@ body {
     border: none;
     transition: background-color 0.3s ease;
 }
+.customBtn-control {
+    display: flex; 
+    justify-content: space-between;
+    margin-left: 3em; 
+
+    padding: 10px 20px;
+    background-color: #07575b;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
 
 .customBtn:hover {
     background-color: lightgray;
 }
+
+.customBtn-control:hover {
+    background-color: lightgray;
+}
+
+/*GROUP*/
+.group {
+    display: block;
+
+}
+
+.group-title {
+    border-bottom: 1px solid #ccc;
+    color:#07575b;
+    font-size: 28px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.function-wrapper {
+    border: 1px solid #ccc;
+    background-color:#336B87;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.function-group {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color:#90AFC5;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.function-btn {
+    position: relative;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+    display: block;
+    margin: 0 auto;
+}
+
+
+.function-btn:hover {
+    background-color: #f2f2f2;
+}
+
+.function-btn.active {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.group.adjustGroup .function-wrapper {
+    background-color: yellow;
+}
+
+.group.filter .function-wrapper {
+    background-color: #ECECEC;
+}
+
+.group.text .function-wrapper {
+    background-color: #F8F8F8;
+}
+
+.group.draw .function-wrapper {
+    background-color: #E6E6E6;
+}
+
+.text{
+    color: #de7a22;
+    font-weight: bold;
+}
+.text-vanban{
+    color: #de7a22;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.function-btn:hover {
+    background-color: yellow;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+    fill: #000; /* Màu sắc của biểu tượng */
+}
+
+

@@ -20,7 +20,7 @@
     <canvas id="canvas" style="display:none;"></canvas>
     <div class="sidebar" style="left: 0;">
         <div class="function-group">
-            <div class="group-title" onclick="toggleGroup('adjustGroup')">Điều chỉnh</div>
+            <div class="group-title">Điều chỉnh</div>
             <div class="group" id="adjustGroup">
                 <div class="function-wrapper">
                     <div>
@@ -36,19 +36,19 @@
                         <label for="contrastSlider">Tương phản:</label>
                         <input type="range" id="contrastSlider" min="0.01" max="2.01" step="0.01" value="1">
                     </div>
-                    <button id="cropBtn" class="function-btn" onclick="toggleFunction('cropBtn')">Cắt ảnh</button><br>
-                    <button id="rotateBtn" class="function-btn" onclick="toggleFunction('rotateBtn')">Xoay ảnh</button><br>
-                    <button id="flipBtn" class="function-btn" onclick="toggleFunction('flipBtn')">Lật ảnh</button>
+                    <button id="cropBtn" class="function-btn">Cắt ảnh</button><br>
+                    <button id="rotateBtn" class="function-btn">Xoay ảnh</button><br>
+                    <button id="flipBtn" class="function-btn">Lật ảnh</button>
                 </div>
             </div>
         </div>
 
         <div class="function-group">
-            <div class="group-title" onclick="toggleGroup('filterGroup')">Bộ lọc</div>
+            <div class="group-title">Bộ lọc</div>
             <div class="group" id="filterGroup">
                 <div class="function-wrapper">
-                    <button id="grayBtn" class="function-btn" onclick="toggleFunction('grayBtn')">Làm xám</button>
-                    <button id="edgeBtn" class="function-btn" onclick="toggleFunction('edgeBtn')">Biên cạnh</button>
+                    <button id="grayBtn" class="function-btn">Làm xám</button>
+                    <button id="edgeBtn" class="function-btn">Biên cạnh</button>
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@
 
     <div class="sidebar" style="right: 0;">
         <div class="function-group">
-            <div class="group-title" onclick="toggleGroup('textGroup')">Viết chữ</div>
+            <div class="group-title">Viết chữ</div>
             <div class="group" id="textGroup">
                 <div class="function-wrapper">
                     <div>
@@ -71,12 +71,14 @@
                         <label for="fontSize">Kích thước chữ:</label>
                         <input type="number" id="fontSize" min="1" max="100" step="1" value="20" onchange="updateTextScale()">
                     </div>
+                    <button onclick="handleText()">Viết chữ</button>
+                    <button onclick="deleteText()">Xóa chữ</button>
                 </div>
             </div>
         </div>
 
         <div class="function-group">
-            <div class="group-title" onclick="toggleGroup('drawGroup')">Vẽ</div>
+            <div class="group-title">Vẽ</div>
             <div class="group" id="drawGroup">
                 <div class="function-wrapper">
                     <div>

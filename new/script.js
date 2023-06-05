@@ -312,7 +312,7 @@ var undoHis = [];
             var pixelIndex = (mouseY * canvas.width + mouseX) * 4;
 
             // b1. Dò tìm ảnh trước đó
-            var prevIndex = 0;
+            var prevIndex = editHis.length - 2;
             let prevImgData = editHis[prevIndex];
             while (prevImgData.width != canvas.width || prevImgData.height != canvas.height) {
                 prevImgData = editHis[++prevIndex];

@@ -43,14 +43,14 @@ body {
     height: 100%;
 }
 
-#buttons {
+/* #buttons {
     margin-top: 20px;
     border: 1px solid gray;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
+} */
 
 .customBtn {
     display: inline-block;
@@ -71,10 +71,6 @@ body {
 
 /*GROUP*/
 .group {
-    display: none;
-}
-
-.group.expanded {
     display: block;
 }
 
@@ -117,11 +113,6 @@ body {
 .function-btn.active {
     background-color: #4CAF50;
     color: #fff;
-}
-
-.slider-label {
-    display: block;
-    margin-bottom: 5px;
 }
 
 .group.adjustGroup .function-wrapper {

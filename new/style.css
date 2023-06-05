@@ -1,0 +1,141 @@
+h1 {
+    position: absolute;
+    top: 2vh;
+    left: 5vw;
+    font-size: 24px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.control {
+    position: fixed;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 5vh;
+    right: 24vw;
+}
+
+#canvas {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.sidebar {
+    width: 15vw;
+    padding: 10px;
+
+    /*Căn chỉnh*/
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    /*Vị trí*/
+    position: fixed;
+    height: 100%;
+}
+
+#buttons {
+    margin-top: 20px;
+    border: 1px solid gray;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.customBtn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: gray;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.customBtn:hover {
+    background-color: lightgray;
+}
+
+/*GROUP*/
+.group {
+    display: none;
+}
+
+.group.expanded {
+    display: block;
+}
+
+.group-title {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.function-wrapper {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.function-group {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.function-btn {
+    position: relative;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.function-btn:hover {
+    background-color: #f2f2f2;
+}
+
+.function-btn.active {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.slider-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.group.adjustGroup .function-wrapper {
+    background-color: #F1F1F1;
+}
+
+.group.filter .function-wrapper {
+    background-color: #ECECEC;
+}
+
+.group.text .function-wrapper {
+    background-color: #F8F8F8;
+}
+
+.group.draw .function-wrapper {
+    background-color: #E6E6E6;
+}

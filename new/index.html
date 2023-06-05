@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CHỈNH SỬA ẢNH</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <h1>CHỈNH SỬA ẢNH</h1>
+    <!-- <div class="sidebar" style="left: 0;">
+        <label for="uploadBtn" id="customUploadBtn" class="customBtn">Tải ảnh lên</label>
+        <input type="file" id="uploadBtn" accept="image/*" style="display:none;" />
+        <button id="resetBtn">Khôi phục gốc</button>
+        <button id="downloadBtn">Lưu về máy</button>
+    </div>
+
+    <div class="control">
+        <button id="undoBtn" style="margin-left: 10vw;">Hoàn tác</button>
+        <button id="redoBtn">Lặp lại</button>
+    </div> -->
+    <div class="control">
+        <label for="uploadBtn" id="customUploadBtn" class="customBtn">Tải ảnh lên</label>
+        <input type="file" id="uploadBtn" accept="image/*" style="display:none;" />
+        <button id="resetBtn">Khôi phục gốc</button>
+        <button id="downloadBtn">Lưu về máy</button>
+        <button id="undoBtn" style="margin-left: 10vw;">Hoàn tác</button>
+        <button id="redoBtn">Lặp lại</button>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div class="sidebar" style="left: 0;">
+        <div class="function-group">
+            <div class="group-title" onclick="toggleGroup('adjustGroup')">Điều chỉnh</div>
+            <div class="group" id="adjustGroup">
+                <div class="function-wrapper">
+                    <span class="slider-label">Làm trơn</span>
+                    <input type="range" id="blurSlider" min="0" max="10" step="0.1" value="0">
+
+                    <div>
+                        <label for="lightSlider">Chiếu sáng: </label>
+                        <input type="range" id="lightSlider" min="-50" max="50" step="1" value="0">
+                    </div>
+                    <div>
+                        <label for="contrastSlider">Tương phản:</label>
+                        <input type="range" id="contrastSlider" min="0.01" max="2.01" step="0.01" value="1">
+                    </div>
+                    <button id="cropBtn" class="function-btn" onclick="toggleFunction('cropBtn')">Cắt ảnh</button><br>
+                    <button id="rotateBtn" class="function-btn" onclick="toggleFunction('rotateBtn')">Xoay ảnh</button><br>
+                    <button id="flipBtn" class="function-btn" onclick="toggleFunction('flipBtn')">Lật ảnh</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="function-group">
+            <div class="group-title" onclick="toggleGroup('filterGroup')">Bộ lọc</div>
+            <div class="group" id="filterGroup">
+                <div class="function-wrapper">
+                    <button id="grayBtn" class="function-btn" onclick="toggleFunction('grayBtn')">Làm xám</button>
+                    <button id="edgeBtn" class="function-btn" onclick="toggleFunction('edgeBtn')">Biên cạnh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar" style="right: 0;">
+        <div class="function-group">
+            <div class="group-title" onclick="toggleGroup('textGroup')">Viết chữ</div>
+            <div class="group" id="textGroup">
+                <div class="function-wrapper">
+                    <div>
+                        <label for="text">Văn bản:</label>
+                        <input type="text" id="text" placeholder="Nhập văn bản">
+                    </div>
+                    <div>
+                        <label for="textColor">Màu sắc chữ:</label>
+                        <input type="color" id="textColor" value="#FFFFFF">
+                    </div>
+                    <div>
+                        <label for="fontSize">Kích thước chữ:</label>
+                        <input type="number" id="fontSize" min="1" max="100" step="1" value="20" onchange="updateTextScale()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="function-group">
+            <div class="group-title" onclick="toggleGroup('drawGroup')">Vẽ</div>
+            <div class="group" id="drawGroup">
+                <div class="function-wrapper">
+                    <div>
+                        <label for="drawColor">Màu sắc vẽ:</label>
+                        <input type="color" id="drawColor" value="#FFFFFF">
+                    </div>
+
+                    <div>
+                        <label for="drawThickSelect">Độ dày vẽ:</label>
+                        <select id="drawThickSelect">
+                            <option value="1">1</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </div>
+
+                    <button id="drawBtn">Thực hiện vẽ</button>
+                    <div>
+                        <label for="eraseSizeSelect">Kích thước xóa:</label>
+                        <select id="eraseSizeSelect">
+                            <option value="1">1</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </div>
+                    <button id="eraseBtn">Xóa nét vẽ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script src="script.js"></script>

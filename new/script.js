@@ -129,6 +129,36 @@ var undoHis = [];
 
 // CÁC NÚT CHỨC NĂNG
 {
+    // Hiển thị
+    {
+        function toggleGroup(groupName) {
+            var group = document.getElementById(groupName);
+            group.classList.toggle("expanded");
+
+            var allGroups = document.getElementsByClassName("group");
+            for (var i = 0; i < allGroups.length; i++) {
+                if (allGroups[i].id !== groupName) {
+                    allGroups[i].classList.remove("expanded");
+                }
+            }
+        }
+
+        function toggleFunction(btnId) {
+            var btn = document.getElementById(btnId);
+            btn.classList.toggle("active");
+
+            var group = btn.parentNode.nextElementSibling;
+            var allGroups = document.getElementsByClassName("group");
+            for (var i = 0; i < allGroups.length; i++) {
+                if (allGroups[i] === group) {
+                    if (allGroups[i].id !== group.id) {
+                        allGroups[i].classList.remove("expanded");
+                    }
+                }
+            }
+        }
+    }
+
     // ĐIỀU CHỈNH
     {
         const adjustBtn = document.getElementById("adjustBtn");

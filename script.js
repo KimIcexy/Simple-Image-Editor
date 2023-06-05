@@ -26,16 +26,13 @@ var undoHis = [];
                     var height = img.height;
 
                     // Tính toán kích thước mới dựa trên maxWidth và maxHeight
-                    if (width > height) {
-                        if (width > maxWidth) {
-                            height *= maxWidth / width;
-                            width = maxWidth;
-                        }
-                    } else {
-                        if (height > maxHeight) {
-                            width *= maxHeight / height;
-                            height = maxHeight;
-                        }
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
                     }
 
                     // Vẽ ảnh lên canvas

@@ -144,17 +144,16 @@ var undoHis = [];
     {
         var lightSlider = document.getElementById('lightSlider');
         lightSlider.addEventListener('change', function () {
-            img = context.getImageData(0, 0, canvas.width, canvas.height);
-            var data = img.data;
+            var data = editHis[editHis.length - 1].data;
+            console.log('edit length: ', editHis.length);
             var value = Number(lightSlider.value);
 
-            for (let i = 0; i < img.data.length; i += 4) {
+            for (let i = 0; i < data.length; i += 4) {
                 for (let k = 0; k < 3; k++)
                     data[i + k] += value;
             }
-            var resImgData = new ImageData(img.data, canvas.width, canvas.height);
+            var resImgData = new ImageData(data, canvas.width, canvas.height);
             context.putImageData(resImgData, 0, 0);
-            editHis.push(resImgData);
         });
 
     }
@@ -163,20 +162,25 @@ var undoHis = [];
     {
         var contrastSlider = document.getElementById('contrastSlider');
         contrastSlider.addEventListener('change', function () {
-            img = context.getImageData(0, 0, canvas.width, canvas.height);
-            var data = img.data;
+            var data = editHis[editHis.length - 1].data;
             var value = Number(contrastSlider.value);
 
-            for (let i = 0; i < img.data.length; i += 4) {
+            for (let i = 0; i < data.length; i += 4) {
                 for (let k = 0; k < 3; k++)
                     data[i + k] *= value;
             }
-            var resImgData = new ImageData(img.data, canvas.width, canvas.height);
+            var resImgData = new ImageData(data, canvas.width, canvas.height);
             context.putImageData(resImgData, 0, 0);
-            editHis.push(resImgData);
         });
     }
 
+    function saveAdjustments() {
+        blurSlider.value = 0;
+        lightSlider.value = 0;
+        contrastSlider.va = 1;
+        editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
+        console.log('save');
+    }
 
     // Làm xám
     {
@@ -356,6 +360,7 @@ var undoHis = [];
         function drawTextElements() {
             // Khôi phục ảnh trước khi thêm text
             context.clearRect(0, 0, canvas.width, canvas.height);
+            console.log(editHis.length);
             context.putImageData(editHis[editHis.length - 1], 0, 0);
 
             // Vẽ lại các text và khung chọn mới

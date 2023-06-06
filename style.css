@@ -202,3 +202,41 @@ body {
     fill: #000;
     /* Màu sắc của biểu tượng */
 }
+.function-btn-draw {
+    position: relative;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+.function-btn-save{
+    position: relative;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.customBtn-control-reset {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 3em;
+
+    padding: 13px 22px;
+    background-color: #07575b;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 4px;
+    border: none;
+    transition: background-color 0.3s ease;
+}

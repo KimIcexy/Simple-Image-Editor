@@ -9,6 +9,15 @@
     <link href='https://unpkg.com/css.gg@2.0.0/icons/css/software-download.css' rel='stylesheet'>
     <link href='https://unpkg.com/css.gg@2.0.0/icons/css/sync.css' rel='stylesheet'>
     <link href='https://unpkg.com/css.gg@2.0.0/icons/css/software-upload.css' rel='stylesheet'>
+    <script src="https://unpkg.com/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/swap.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/erase.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/format-text.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/pen.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/edit-flip-h.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/play-backwards.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/crop.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/corner-double-up-left.css' rel='stylesheet'>
 
 
 </head>
@@ -18,7 +27,7 @@
     <div class="control">
         <label for="uploadBtn" id="customUploadBtn" class="customBtn-control"><i class="gg-software-upload"></i></label>
         <input type="file" id="uploadBtn" accept="image/*" style="display:none;" />
-        <button id="resetBtn" class="customBtn-control"><i class="gg-sync"></i></button>
+        <button id="resetBtn" class="customBtn-control-reset"><i class="gg-corner-double-up-left"></i></button>
         <button id="downloadBtn" class="customBtn-control"><i class="gg-software-download"></i></button>
         <button id="undoBtn" class="customBtn-control" style="margin-left: 10vw;"><i class="gg-undo"></i></button>
         <button id="redoBtn" class="customBtn-control"><i class="gg-redo"></i></button>
@@ -44,9 +53,10 @@
                         <label for="contrastSlider" class="text">Tương phản:</label>
                         <input type="range" id="contrastSlider" min="0.01" max="2.01" step="0.01" value="1">
                     </div>
-                    <button id="cropBtn" class="function-btn">Cắt ảnh</button><br>
-                    <button id="rotateBtn" class="function-btn">Xoay ảnh</button><br>
-                    <button id="flipBtn" class="function-btn" style="margin-bottom: 5px;">Lật ảnh</button>
+
+                    <button id="cropBtn" class="function-btn"><i class="gg-crop"></i></button><br>
+                    <button id="rotateBtn" class="function-btn"><i class="gg-sync"></i></button><br>
+                    <button id="flipBtn" class="function-btn" style="margin-bottom: 5px;"><i class="gg-edit-flip-h"></i></button>
                 </div>
             </div>
         </div>
@@ -79,9 +89,9 @@
                         <label for="fontSize" class="text-subtit">Kích thước chữ:</label>
                         <input type="number" id="fontSize" min="1" max="100" step="1" value="20" onchange="updateTextScale()">
                     </div>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="handleText()">Viết chữ</button>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="deleteText()">Xóa chữ</button>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="saveText()">Lưu</button>
+                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn-text" onclick="handleText()"><i class="gg-pen"></i></button>
+                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="deleteText()"><i class="gg-erase"></i></button>
+                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn-save" onclick="saveText()"><ion-icon name="save-outline"></ion-icon></button>
                 </div>
             </div>
         </div>
@@ -105,7 +115,8 @@
                         </select>
                     </div>
 
-                    <button id="drawBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;">Thực hiện vẽ</button>
+
+                    <button id="drawBtn" class="function-btn-draw" style="margin-top: 15px; margin-bottom: 15px;"><ion-icon name="brush-outline"></ion-icon></button>
                     <div>
                         <label for="eraseSizeSelect" class="text-subtit">Kích thước xóa:</label>
                         <select id="eraseSizeSelect">
@@ -114,9 +125,11 @@
                             <option value="10">10</option>
                             <option value="15">15</option>
                         </select>
+
                     </div>
-                    <button id="eraseBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;">Xóa nét vẽ</button>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="saveDrawing()">Lưu</button>
+                    <button id="eraseBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;"><i class="gg-erase"></i></button>
+                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn-save" onclick="saveDrawing()"><ion-icon name="save-outline"></ion-icon></button>
+                </div>
                 </div>
             </div>
         </div>

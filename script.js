@@ -280,7 +280,6 @@ var undoHis = [];
         function stopDrawing(e) {
             if (e.button === 0) {
                 isDrawing = false;
-                editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
             }
         }
 
@@ -311,14 +310,10 @@ var undoHis = [];
             var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
             var pixelIndex = (mouseY * canvas.width + mouseX) * 4;
 
-            // b1. Dò tìm ảnh trước đó
-            var prevIndex = 0;
-            let prevImgData = editHis[prevIndex];
-            while (prevImgData.width != canvas.width || prevImgData.height != canvas.height) {
-                prevImgData = editHis[++prevIndex];
-            }
+            // Ảnh trước khi thêm nét vẽ
+            var prevImgData = editHis[editHis.length - 1];
 
-            // b2. Xóa nét vẽ trong vùng bán kính của cục tẩy
+            // Xóa nét vẽ trong vùng bán kính của cục tẩy
             var eraserSize = parseInt(eraserSizeInput.value);
             for (var i = -eraserSize; i <= eraserSize; i++) {
                 for (var j = -eraserSize; j <= eraserSize; j++) {
@@ -338,8 +333,12 @@ var undoHis = [];
         function stopErasing(e) {
             if (e.button === 0) {
                 isErasing = false;
-                editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
             }
+        }
+
+        // Lưu
+        function saveDrawing() {
+            editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
         }
     }
 
@@ -353,12 +352,13 @@ var undoHis = [];
         var prevX;
         var prevY;
         var textScale = 1;
-        var prevImgData;
 
         function drawTextElements() {
+            // Khôi phục ảnh trước khi thêm text
             context.clearRect(0, 0, canvas.width, canvas.height);
-            context.putImageData(prevImgData, 0, 0);
+            context.putImageData(editHis[editHis.length - 1], 0, 0);
 
+            // Vẽ lại các text và khung chọn mới
             textElements.forEach(function (textElement, index) {
                 context.font = textElement.fontSize * textScale + 'px Arial';
                 context.fillStyle = textElement.color;
@@ -378,22 +378,24 @@ var undoHis = [];
         }
 
         function addText() {
-            var text = document.getElementById('text').value;
+            var text = document.getElementById('text');
             var textColor = document.getElementById('textColor').value;
             var fontSize = parseInt(document.getElementById('fontSize').value);
+            if (text.value === "") return;
 
             var textElement = {
-                text: text,
+                text: text.value,
                 color: textColor,
                 fontSize: fontSize,
                 x: canvas.width / 2,
                 y: canvas.height / 2
             };
-
             textElements.push(textElement);
+
+            // Cập nhật
+            selectedTextIndex = textElements.length - 1;
+            text.value = "";
             drawTextElements();
-            if (text != '')
-                editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
         }
 
         function deleteText() {
@@ -409,14 +411,8 @@ var undoHis = [];
             drawTextElements();
         }
 
-        function clearSelection() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.putImageData(prevImgData, 0, 0);
-            drawTextElements();
-        }
-
         function handleText() {
-            prevImgData = context.getImageData(0, 0, canvas.width, canvas.height);
+            // Thêm chữ mới
             addText();
 
             canvas.addEventListener('mousedown', function (e) {
@@ -449,7 +445,6 @@ var undoHis = [];
 
                 if (!isInsideText) {
                     selectedTextIndex = -1;
-                    clearSelection();
                 }
 
                 drawTextElements();
@@ -480,12 +475,9 @@ var undoHis = [];
                     startX = x;
                     startY = y;
 
-                    clearSelection();
                     drawTextElements();
                 }
             });
-
-
 
             canvas.addEventListener('mouseup', function () {
                 isDragging = false;
@@ -494,6 +486,16 @@ var undoHis = [];
             canvas.addEventListener('mouseleave', function () {
                 isDragging = false;
             });
+        }
+
+        function saveText() {
+            if (text != '') {
+                selectedTextIndex = -1;
+                drawTextElements();
+                textElements = [];
+                editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
+            }
+
         }
     }
 

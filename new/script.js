@@ -310,12 +310,10 @@ var undoHis = [];
             var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
             var pixelIndex = (mouseY * canvas.width + mouseX) * 4;
 
-            // b1. Dò tìm ảnh trước đó
-            var prevIndex = editHis.length - 3;
-            if (prevIndex < 0) return;
-            let prevImgData = editHis[prevIndex];
+            // Ảnh trước khi thêm nét vẽ
+            var prevImgData = editHis[editHis.length - 1];
 
-            // b2. Xóa nét vẽ trong vùng bán kính của cục tẩy
+            // Xóa nét vẽ trong vùng bán kính của cục tẩy
             var eraserSize = parseInt(eraserSizeInput.value);
             for (var i = -eraserSize; i <= eraserSize; i++) {
                 for (var j = -eraserSize; j <= eraserSize; j++) {

@@ -2,7 +2,7 @@ h1 {
     position: absolute;
     top: 0vh;
     left: -0.5vw;
-    font-size: 30px;
+    font-size: 24px;
     animation: changeColor 5s infinite;
     border: 2px solid yellowgreen;
     padding: 10px;
@@ -74,15 +74,6 @@ body {
 
 }
 
-/* #buttons {
-    margin-top: 20px;
-    border: 1px solid gray;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-} */
-
 .customBtn {
     display: inline-block;
     padding: 10px 20px;
@@ -129,7 +120,7 @@ body {
 .group-title {
     border-bottom: 1px solid #ccc;
     color: #07575b;
-    font-size: 28px;
+    font-size: 22px;
     padding-bottom: 5px;
     margin-bottom: 10px;
     font-weight: bold;
@@ -195,7 +186,7 @@ body {
     font-weight: bold;
 }
 
-.text-vanban {
+.text-subtit {
     color: #de7a22;
     font-weight: bold;
     font-size: 14px;

@@ -240,3 +240,14 @@ body {
     border: none;
     transition: background-color 0.3s ease;
 }
+.function-btn-text {
+    position: relative;
+    padding: 15px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}

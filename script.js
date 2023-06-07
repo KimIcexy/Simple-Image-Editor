@@ -191,7 +191,7 @@ var undoHis = [];
 // CÁC NÚT CHỨC NĂNG
 {
 
-    // Làm trơn (Blur)
+    // Làm trơn
     {
         // Lấy phần tử thanh trượt làm trơn bằng cách sử dụng ID của nó
         var blurSlider = document.getElementById('blurSlider');
@@ -215,31 +215,29 @@ var undoHis = [];
             for (let i = 0; i < data.length; i += 4) {
                 var avgR = 0, avgG = 0, avgB = 0;
                 var count = 0;
-            // Tính toán trên một vùng nhỏ hơn để làm trơn
-            for (let x = -value; x <= value; x++) {
-                for (let y = -value; y <= value; y++) {
-                    // Tính toán vị trí offset trong mảng dữ liệu dựa trên x và y
-                    var offsetX = x + y * width;
-                    var index = i + (offsetX * 4);
+                // Tính toán trên một vùng nhỏ hơn để làm trơn
+                for (let x = -value; x <= value; x++) {
+                    for (let y = -value; y <= value; y++) {
+                        // Tính toán vị trí offset trong mảng dữ liệu dựa trên x và y
+                        var offsetX = x + y * width;
+                        var index = i + (offsetX * 4);
 
-                    // Kiểm tra xem offset có nằm trong phạm vi của dữ liệu không vượt quá chiều rộng và chiều cao
-                    if (offsetX >= 0 && offsetX < width && index >= 0 && index < data.length) {
-                        // Cộng dồn các giá trị màu R, G, B
-                        avgR += data[index];
-                        avgG += data[index + 1];
-                        avgB += data[index + 2];
-                        count++;
+                        // Kiểm tra xem offset có nằm trong phạm vi của dữ liệu không vượt quá chiều rộng và chiều cao
+                        if (offsetX >= 0 && offsetX < width && index >= 0 && index < data.length) {
+                            // Cộng dồn các giá trị màu R, G, B
+                            avgR += data[index];
+                            avgG += data[index + 1];
+                            avgB += data[index + 2];
+                            count++;
+                        }
                     }
                 }
-            }
                 // Gán giá trị trung bình cho pixel hiện tại
-                //Giá trị màu đỏ (R) của pixel hiện tại trong mảng dữ liệu resData.
                 resData[i] = avgR / count;
-                //Giá trị màu xanh lá cây
                 resData[i + 1] = avgG / count;
-                //Giá trị màu xanh da trời 
                 resData[i + 2] = avgB / count;
-                //Giá trị kênh alpha (độ trong suốt) của pixel hiện tại trong mảng dữ liệu resData
+
+                //Giá trị kênh alpha (độ trong suốt) không thay đổi
                 resData[i + 3] = data[i + 3];
             }
 
@@ -248,7 +246,7 @@ var undoHis = [];
 
             // Đặt dữ liệu hình ảnh đã làm trơn lên canvas
             context.putImageData(resImgData, 0, 0);
-});
+        });
     }
 
 
@@ -289,7 +287,13 @@ var undoHis = [];
         });
     }
 
-
+    // Lưu lại các điều chỉnh
+    function saveAdjustments() {
+        blurSlider.value = 0;
+        lightSlider.value = 0;
+        contrastSlider.value = 1;
+        editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
+    }
 
     // Làm xám
     {
@@ -530,7 +534,7 @@ var undoHis = [];
 
         function updateTextScale() {
             var newTextScale = parseFloat(document.getElementById('fontSize').value) / 20;
-        
+
             // Cập nhật kích thước chữ được chọn
             if (selectedTextIndex !== -1) {
                 var selectedTextElement = textElements[selectedTextIndex];
@@ -538,10 +542,10 @@ var undoHis = [];
                 selectedTextScale = newTextScale;
                 selectedTextElement.fontSize *= deltaScale;
             }
-        
+
             drawTextElements();
         }
-        
+
 
         function handleText() {
             // Thêm chữ mới
@@ -798,11 +802,4 @@ var undoHis = [];
             FlipImage();
         });
     }
-}
-
-function saveAdjustments() {
-    blurSlider.value = 0;
-    lightSlider.value = 0;
-    contrastSlider.va = 1;
-    editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
 }

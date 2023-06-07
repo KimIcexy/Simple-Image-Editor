@@ -193,42 +193,43 @@ var undoHis = [];
 
     // Làm trơn
     {
-// Làm trơn
-{
-    var blurSlider = document.getElementById('blurSlider');
-    blurSlider.addEventListener('input', function () {
-        var value = Number(blurSlider.value);
-        var data = editHis[editHis.length - 1].data.slice();
-        var resData = [];
-
-        for (let i = 0; i < data.length; i += 4) {
-            var avgR = 0, avgG = 0, avgB = 0;
-            var count = 0;
-
-            // Tính trung bình giá trị RGB của các pixel xung quanh
-            for (let x = -value; x <= value; x++) {
-                for (let y = -value; y <= value; y++) {
-                    var index = i + (x + y * canvas.width) * 4;
-                    if (index >= 0 && index < data.length) {
-                        avgR += data[index];
-                        avgG += data[index + 1];
-                        avgB += data[index + 2];
-                        count++;
+        var blurSlider = document.getElementById('blurSlider');
+        blurSlider.addEventListener('input', function () {
+            var value = Number(blurSlider.value);
+            var data = editHis[editHis.length - 1].data;
+            var resData = [];
+            var width = canvas.width;
+            var height = canvas.height;
+        
+            for (let i = 0; i < data.length; i += 4) {
+                var avgR = 0, avgG = 0, avgB = 0;
+                var count = 0;
+        
+                // Tính toán chỉ trên vùng nhỏ hơn
+                for (let x = -value; x <= value; x++) {
+                    for (let y = -value; y <= value; y++) {
+                        var offsetX = x + y * width;
+                        var index = i + (offsetX * 4);
+                        if (offsetX >= 0 && offsetX < width && index >= 0 && index < data.length) {
+                            avgR += data[index];
+                            avgG += data[index + 1];
+                            avgB += data[index + 2];
+                            count++;
+                        }
                     }
                 }
+        
+                // Gán giá trị trung bình cho pixel hiện tại
+                resData[i] = avgR / count;
+                resData[i + 1] = avgG / count;
+                resData[i + 2] = avgB / count;
+                resData[i + 3] = data[i + 3];
             }
-
-            // Gán giá trị trung bình cho pixel hiện tại
-            resData[i] = avgR / count;
-            resData[i + 1] = avgG / count;
-            resData[i + 2] = avgB / count;
-            resData[i + 3] = data[i + 3];
-        }
-
-        var resImgData = new ImageData(new Uint8ClampedArray(resData), canvas.width, canvas.height);
-        context.putImageData(resImgData, 0, 0);
-    });
-}
+        
+            var resImgData = new ImageData(new Uint8ClampedArray(resData), width, height);
+            context.putImageData(resImgData, 0, 0);
+        });
+        
 
     }
 
@@ -236,7 +237,7 @@ var undoHis = [];
     {
         var lightSlider = document.getElementById('lightSlider');
         lightSlider.addEventListener('change', function () {
-            var data = editHis[editHis.length - 1].data;
+            var data = editHis[editHis.length - 1].data.slice();
             var value = Number(lightSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {
@@ -253,7 +254,7 @@ var undoHis = [];
     {
         var contrastSlider = document.getElementById('contrastSlider');
         contrastSlider.addEventListener('change', function () {
-            var data = editHis[editHis.length - 1].data;
+            var data = editHis[editHis.length - 1].data.slice();
             var value = Number(contrastSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {

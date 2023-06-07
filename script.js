@@ -193,18 +193,50 @@ var undoHis = [];
 
     // Làm trơn
     {
-        var blurSlider = document.getElementById('blurSlider');
-        blurSlider.addEventListener('change', function () {
-            context.filter = `blur(${blurSlider.value}px)`;
-            context.drawImage(canvas, 0, 0);
-        });
+// Làm trơn
+{
+    var blurSlider = document.getElementById('blurSlider');
+    blurSlider.addEventListener('input', function () {
+        var value = Number(blurSlider.value);
+        var data = editHis[editHis.length - 1].data.slice();
+        var resData = [];
+
+        for (let i = 0; i < data.length; i += 4) {
+            var avgR = 0, avgG = 0, avgB = 0;
+            var count = 0;
+
+            // Tính trung bình giá trị RGB của các pixel xung quanh
+            for (let x = -value; x <= value; x++) {
+                for (let y = -value; y <= value; y++) {
+                    var index = i + (x + y * canvas.width) * 4;
+                    if (index >= 0 && index < data.length) {
+                        avgR += data[index];
+                        avgG += data[index + 1];
+                        avgB += data[index + 2];
+                        count++;
+                    }
+                }
+            }
+
+            // Gán giá trị trung bình cho pixel hiện tại
+            resData[i] = avgR / count;
+            resData[i + 1] = avgG / count;
+            resData[i + 2] = avgB / count;
+            resData[i + 3] = data[i + 3];
+        }
+
+        var resImgData = new ImageData(new Uint8ClampedArray(resData), canvas.width, canvas.height);
+        context.putImageData(resImgData, 0, 0);
+    });
+}
+
     }
 
     // Chiếu sáng
     {
         var lightSlider = document.getElementById('lightSlider');
         lightSlider.addEventListener('change', function () {
-            var data = editHis[editHis.length - 1].data.slice()
+            var data = editHis[editHis.length - 1].data;
             var value = Number(lightSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {
@@ -221,7 +253,7 @@ var undoHis = [];
     {
         var contrastSlider = document.getElementById('contrastSlider');
         contrastSlider.addEventListener('change', function () {
-            var data = editHis[editHis.length - 1].data.slice();
+            var data = editHis[editHis.length - 1].data;
             var value = Number(contrastSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {
@@ -470,7 +502,7 @@ var undoHis = [];
 
         function updateTextScale() {
             var newTextScale = parseFloat(document.getElementById('fontSize').value) / 20;
-
+        
             // Cập nhật kích thước chữ được chọn
             if (selectedTextIndex !== -1) {
                 var selectedTextElement = textElements[selectedTextIndex];
@@ -478,10 +510,10 @@ var undoHis = [];
                 selectedTextScale = newTextScale;
                 selectedTextElement.fontSize *= deltaScale;
             }
-
+        
             drawTextElements();
         }
-
+        
 
         function handleText() {
             // Thêm chữ mới

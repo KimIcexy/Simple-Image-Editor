@@ -191,20 +191,72 @@ var undoHis = [];
 // CÁC NÚT CHỨC NĂNG
 {
 
-    // Làm trơn
+    // Làm trơn (Blur)
     {
+        // Lấy phần tử thanh trượt làm trơn bằng cách sử dụng ID của nó
         var blurSlider = document.getElementById('blurSlider');
-        blurSlider.addEventListener('change', function () {
-            context.filter = `blur(${blurSlider.value}px)`;
-            context.drawImage(canvas, 0, 0);
-        });
+
+        // Thêm một bộ lắng nghe sự kiện cho sự kiện input của thanh trượt làm trơn
+        blurSlider.addEventListener('input', function () {
+            // Lấy giá trị của thanh trượt làm trơn dưới dạng số
+            var value = Number(blurSlider.value);
+
+            // Lấy dữ liệu của mục lịch sử chỉnh sửa cuối cùng
+            var data = editHis[editHis.length - 1].data;
+
+            // Tạo một mảng để lưu trữ dữ liệu sau khi làm trơn
+            var resData = [];
+
+            // Lấy chiều rộng và chiều cao của canvas
+            var width = canvas.width;
+            var height = canvas.height;
+
+            // Duyệt qua dữ liệu từng pixel
+            for (let i = 0; i < data.length; i += 4) {
+                var avgR = 0, avgG = 0, avgB = 0;
+                var count = 0;
+            // Tính toán trên một vùng nhỏ hơn để làm trơn
+            for (let x = -value; x <= value; x++) {
+                for (let y = -value; y <= value; y++) {
+                    // Tính toán vị trí offset trong mảng dữ liệu dựa trên x và y
+                    var offsetX = x + y * width;
+                    var index = i + (offsetX * 4);
+
+                    // Kiểm tra xem offset có nằm trong phạm vi của dữ liệu không vượt quá chiều rộng và chiều cao
+                    if (offsetX >= 0 && offsetX < width && index >= 0 && index < data.length) {
+                        // Cộng dồn các giá trị màu R, G, B
+                        avgR += data[index];
+                        avgG += data[index + 1];
+                        avgB += data[index + 2];
+                        count++;
+                    }
+                }
+            }
+                // Gán giá trị trung bình cho pixel hiện tại
+                //Giá trị màu đỏ (R) của pixel hiện tại trong mảng dữ liệu resData.
+                resData[i] = avgR / count;
+                //Giá trị màu xanh lá cây
+                resData[i + 1] = avgG / count;
+                //Giá trị màu xanh da trời 
+                resData[i + 2] = avgB / count;
+                //Giá trị kênh alpha (độ trong suốt) của pixel hiện tại trong mảng dữ liệu resData
+                resData[i + 3] = data[i + 3];
+            }
+
+            // Tạo đối tượng ImageData mới với dữ liệu đã làm trơn, chiều rộng và chiều cao của canvas
+            var resImgData = new ImageData(new Uint8ClampedArray(resData), width, height);
+
+            // Đặt dữ liệu hình ảnh đã làm trơn lên canvas
+            context.putImageData(resImgData, 0, 0);
+});
     }
+
 
     // Chiếu sáng
     {
         var lightSlider = document.getElementById('lightSlider');
         lightSlider.addEventListener('change', function () {
-            var data = editHis[editHis.length - 1].data.slice()
+            var data = editHis[editHis.length - 1].data.slice();
             var value = Number(lightSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {
@@ -221,27 +273,27 @@ var undoHis = [];
     {
         var contrastSlider = document.getElementById('contrastSlider');
         contrastSlider.addEventListener('change', function () {
+            // Sao chép dữ liệu pixel ban đầu
             var data = editHis[editHis.length - 1].data.slice();
             var value = Number(contrastSlider.value);
 
+            // Điều chỉnh tương phản
             for (let i = 0; i < data.length; i += 4) {
                 for (let k = 0; k < 3; k++)
                     data[i + k] *= value;
             }
+
+            // Tạo hình ảnh mới từ dữ liệu điều chỉnh
             var resImgData = new ImageData(data, canvas.width, canvas.height);
             context.putImageData(resImgData, 0, 0);
         });
     }
 
-    function saveAdjustments() {
-        blurSlider.value = 0;
-        lightSlider.value = 0;
-        contrastSlider.va = 1;
-        editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
-    }
+
 
     // Làm xám
     {
+        // Hàm chuyển đổi sang hình ảnh xám
         function GrayScale(data, width, height) {
             const grayscale = new Uint8ClampedArray(width * height * 4);
             for (let i = 0; i < data.length; i += 4) {
@@ -252,15 +304,23 @@ var undoHis = [];
             }
             return grayscale;
         }
+
+        // Xử lý sự kiện khi nút "grayBtn" được nhấn
         var grayBtn = document.getElementById('grayBtn');
         grayBtn.addEventListener('click', function () {
+            // Lấy dữ liệu pixel từ canvas
             img = context.getImageData(0, 0, canvas.width, canvas.height);
+            // Chuyển đổi sang hình ảnh xám
             var gray = GrayScale(img.data, img.width, img.height);
+            // Tạo đối tượng ImageData mới từ dữ liệu xám
             var grayImgData = new ImageData(gray, canvas.width, canvas.height);
+            // Cập nhật hình ảnh trên canvas
             context.putImageData(grayImgData, 0, 0);
+            // Lưu trạng thái xám vào lịch sử chỉnh sửa
             editHis.push(grayImgData);
         });
     }
+
 
     // Phát hiện biên cạnh
     {
@@ -470,7 +530,7 @@ var undoHis = [];
 
         function updateTextScale() {
             var newTextScale = parseFloat(document.getElementById('fontSize').value) / 20;
-
+        
             // Cập nhật kích thước chữ được chọn
             if (selectedTextIndex !== -1) {
                 var selectedTextElement = textElements[selectedTextIndex];
@@ -478,10 +538,10 @@ var undoHis = [];
                 selectedTextScale = newTextScale;
                 selectedTextElement.fontSize *= deltaScale;
             }
-
+        
             drawTextElements();
         }
-
+        
 
         function handleText() {
             // Thêm chữ mới
@@ -738,4 +798,11 @@ var undoHis = [];
             FlipImage();
         });
     }
+}
+
+function saveAdjustments() {
+    blurSlider.value = 0;
+    lightSlider.value = 0;
+    contrastSlider.va = 1;
+    editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
 }

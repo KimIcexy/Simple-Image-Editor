@@ -290,7 +290,6 @@ var undoHis = [];
         // Xóa
         var isErasing;
         var eraseBtn = document.getElementById("eraseBtn");
-        var eraserSizeInput = document.getElementById("eraseSizeSelect");
 
         eraseBtn.addEventListener("click", function () {
             canvas.removeEventListener("mousedown", startDrawing);
@@ -318,7 +317,7 @@ var undoHis = [];
             var prevImgData = editHis[editHis.length - 1];
 
             // Xóa nét vẽ trong vùng bán kính của cục tẩy
-            var eraserSize = parseInt(eraserSizeInput.value);
+            var eraserSize = parseInt(thicknessInput.value);
             for (var i = -eraserSize; i <= eraserSize; i++) {
                 for (var j = -eraserSize; j <= eraserSize; j++) {
                     var x = mouseX + i;
@@ -632,7 +631,7 @@ var undoHis = [];
 
                     // Kết thúc sự kiện cắt ảnh
                     canvas.removeEventListener('mousedown', onMouseDown);
-                    isCropping = false;
+                    isCroppirng = false;
                     // Ẩn con trỏ chuột
                     canvas.style.cursor = "default";
                     editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));

@@ -24,15 +24,19 @@
 
 <body>
     <h1>CHỈNH SỬA ẢNH</h1>
-    <div class="control">
-        <label for="uploadBtn" id="customUploadBtn" class="customBtn-control"><i class="gg-software-upload"></i></label>
-        <input type="file" id="uploadBtn" accept="image/*" style="display:none;" />
+    <div class="control" style="left: 16vw;">
+        <label for="uploadBtn" id="customUploadBtn" class="customBtn-control customBtn-control-upload"><i class="gg-software-upload"></i></label>
+        <input type="file" id="uploadBtn" accept="image/*" style="display:none;">
         <button id="resetBtn" class="customBtn-control-reset"><i class="gg-corner-double-up-left"></i></button>
-        <button id="downloadBtn" class="customBtn-control"><i class="gg-software-download"></i></button>
+        <button id="downloadBtn" class="customBtn-control customBtn-control-upload"><i class="gg-software-download"></i></button>
+    </div>
+    <div class="control" style="right: 25vw;">
         <button id="undoBtn" class="customBtn-control" style="margin-left: 10vw;"><i class="gg-undo"></i></button>
         <button id="redoBtn" class="customBtn-control"><i class="gg-redo"></i></button>
-
     </div>
+
+
+
 
     <canvas id="canvas" style="display:none;"></canvas>
     <div class="sidebar" style="left: 0;">
@@ -54,10 +58,15 @@
                         <input type="range" id="contrastSlider" min="0.01" max="2.01" step="0.01" value="1">
                     </div>
 
-                    <button id="cropBtn" class="function-btn"><i class="gg-crop"></i></button><br>
-                    <button id="rotateBtn" class="function-btn"><i class="gg-sync"></i></button><br>
-                    <button id="flipBtn" class="function-btn" style="margin-bottom: 5px;"><i class="gg-edit-flip-h"></i></button>
-                    <button id="flipBtn" class="function-btn" style="margin-bottom: 5px;" onclick="saveAdjustments()">Lưu</button>
+                    <br>
+                    <div class="btn-group">
+                        <button id="cropBtn" class="function-btn"><i class="gg-crop"></i></button><br>
+                        <button id="rotateBtn" class="function-btn"><i class="gg-sync"></i></button><br>
+                        <button id="flipBtn" class="function-btn"><i class="gg-edit-flip-h"></i></button>
+                    </div>
+                    <br>
+
+                    <button class="function-btn function-btn-save" style="margin-bottom: 5px;" onclick="saveAdjustments()"><ion-icon name="save-outline"></ion-icon></button>
                 </div>
             </div>
         </div>
@@ -83,16 +92,18 @@
                         <input type="text" id="text" placeholder="Nhập văn bản">
                     </div>
                     <div>
-                        <label for="textColor" class="text-subtit">Màu sắc chữ:</label>
+                        <label for="textColor" class="text">Màu sắc:</label>
                         <input type="color" id="textColor" value="#FFFFFF">
                     </div>
                     <div>
-                        <label for="fontSize" class="text-subtit">Kích thước chữ:</label>
+                        <label for="fontSize" class="text">Kích thước:</label>
                         <input type="number" id="fontSize" min="1" max="100" step="1" value="20" onchange="updateTextScale()">
                     </div>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn-text" onclick="handleText()"><i class="gg-pen"></i></button>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="deleteText()"><i class="gg-erase"></i></button>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn-save" onclick="saveText()"><ion-icon name="save-outline"></ion-icon></button>
+                    <div class="btn-group">
+                        <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn function-btn-text" onclick="handleText()"><i class="gg-pen"></i></button>
+                        <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="deleteText()"><i class="gg-erase"></i></button>
+                    </div>
+                    <button class="function-btn function-btn-save" onclick="saveText()"><ion-icon name="save-outline"></ion-icon></button>
                 </div>
             </div>
         </div>
@@ -102,13 +113,13 @@
             <div class="group" id="drawGroup">
                 <div class="function-wrapper">
                     <div>
-                        <label for="drawColor" class="text-subtit">Màu sắc vẽ:</label>
+                        <label for="drawColor" class="text">Màu sắc:</label>
                         <input type="color" id="drawColor" value="#FFFFFF">
                     </div>
 
                     <div>
-                        <label for="drawThickSelect" class="text-subtit">Độ dày vẽ:</label>
-                        <select id="drawThickSelect">
+                        <label for="thickSelect" class="text">Kích thước: </label>
+                        <select id="thickSelect">
                             <option value="1">1</option>
                             <option value="5">5</option>
                             <option value="10">10</option>
@@ -116,24 +127,16 @@
                         </select>
                     </div>
 
-
-                    <button id="drawBtn" class="function-btn-draw" style="margin-top: 15px; margin-bottom: 15px;"><ion-icon name="brush-outline"></ion-icon></button>
-                    <div>
-                        <label for="eraseSizeSelect" class="text-subtit">Kích thước xóa:</label>
-                        <select id="eraseSizeSelect">
-                            <option value="1">1</option>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                        </select>
-
+                    <div class="btn-group">
+                        <button id="drawBtn" class="function-btn function-btn-draw" style="margin-top: 15px; margin-bottom: 15px;"><ion-icon name="brush-outline"></ion-icon></button>
+                        <button id="eraseBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;"><i class="gg-erase"></i></button>
                     </div>
-                    <button id="eraseBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;"><i class="gg-erase"></i></button>
-                    <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn-save" onclick="saveDrawing()"><ion-icon name="save-outline"></ion-icon></button>
-                </div>
+
+                    <button class="function-btn function-btn-save" onclick="saveDrawing()"><ion-icon name="save-outline"></ion-icon></button>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </body>
 

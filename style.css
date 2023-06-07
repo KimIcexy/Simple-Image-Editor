@@ -1,35 +1,24 @@
+/* link color palettes: https://colorhunt.co/palette/b799ffacbcffaee2ffe6fffd */
 h1 {
     position: absolute;
-    top: 0vh;
-    left: -0.5vw;
-    font-size: 24px;
-    animation: changeColor 5s infinite;
-    border: 2px solid yellowgreen;
+    top: 0;
+    font-size: 32px;
+    animation: changeColor 1s infinite;
     padding: 10px;
-    margin: 20px;
-    background-color: lightgray;
 }
 
 
 @keyframes changeColor {
     0% {
-        color: red;
-    }
-
-    25% {
-        color: blue;
+        color: #B799FF;
     }
 
     50% {
-        color: green;
-    }
-
-    75% {
-        color: orange;
+        color: #AEE2FF;
     }
 
     100% {
-        color: purple;
+        color: #0075FF;
     }
 }
 
@@ -40,13 +29,12 @@ body {
 }
 
 .control {
-    position: fixed;
+    position: absolute;
     z-index: 999;
     display: flex;
     justify-content: center;
     align-items: center;
     top: 5vh;
-    right: 35vw;
 }
 
 #canvas {
@@ -59,29 +47,22 @@ body {
     width: 15vw;
     padding: 10px;
 
-
-    /*Căn chỉnh*/
     display: flex;
     flex-direction: column;
     justify-content: center;
 
-    /*Vị trí*/
     position: fixed;
     height: 100%;
-
-
 }
 
 .customBtn {
     display: inline-block;
     padding: 10px 20px;
     background-color: gray;
-    color: white;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
     border-radius: 4px;
-    border: none;
     transition: background-color 0.3s ease;
 }
 
@@ -91,136 +72,20 @@ body {
     margin-left: 3em;
 
     padding: 10px 20px;
-    background-color: #07575b;
-    color: white;
+    background-color: white;
+    color: #0075FF;
     text-align: center;
-    text-decoration: none;
     cursor: pointer;
     border-radius: 4px;
-    border: none;
     transition: background-color 0.3s ease;
-}
-
-.customBtn:hover {
-    background-color: lightgray;
 }
 
 .customBtn-control:hover {
-    background-color: lightgray;
+    background-color: #B799FF;
 }
 
-/*GROUP*/
-.group {
-    display: block;
-
-}
-
-.group-title {
-    border-bottom: 1px solid #ccc;
-    color: #07575b;
-    font-size: 22px;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.function-wrapper {
-    border: 1px solid #ccc;
-    background-color: #336B87;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.function-group {
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #90AFC5;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-.function-btn {
-    position: relative;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: block;
-    margin: 0 auto;
-}
-
-
-.function-btn:hover {
-    background-color: #f2f2f2;
-}
-
-.function-btn.active {
-    background-color: #4CAF50;
-    color: #fff;
-}
-
-.group.adjustGroup .function-wrapper {
-    background-color: yellow;
-}
-
-.group.filter .function-wrapper {
-    background-color: #ECECEC;
-}
-
-.group.text .function-wrapper {
-    background-color: #F8F8F8;
-}
-
-.group.draw .function-wrapper {
-    background-color: #E6E6E6;
-}
-
-.text {
-    color: #de7a22;
-    font-weight: bold;
-}
-
-.text-subtit {
-    color: #de7a22;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.function-btn:hover {
-    background-color: yellow;
-}
-
-.icon {
-    width: 24px;
-    height: 24px;
-    fill: #000;
-    /* Màu sắc của biểu tượng */
-}
-.function-btn-draw {
-    position: relative;
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: block;
-    margin: 0 auto;
-}
-.function-btn-save{
-    position: relative;
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: block;
-    margin: 0 auto;
+.customBtn-control-upload {
+    border: 2px solid black;
 }
 
 .customBtn-control-reset {
@@ -229,23 +94,120 @@ body {
     margin-left: 3em;
 
     padding: 13px 22px;
-    background-color: #07575b;
-    color: white;
+    color: #0075FF;
+    background-color: white;
     text-align: center;
-    text-decoration: none;
     cursor: pointer;
     border-radius: 4px;
-    border: none;
     transition: background-color 0.3s ease;
 }
-.function-btn-text {
+
+.customBtn-control-reset:hover {
+    background-color: #B799FF;
+}
+
+/*GROUP*/
+.group {
+    display: block;
+}
+
+.group-title {
+    border-bottom: 1px solid black;
+    color: black;
+    font-size: 22px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.function-wrapper {
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.function-group {
+    padding: 10px;
+    border: 1px solid black;
+    background-color: #AEE2FF;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.function-btn {
     position: relative;
-    padding: 15px 15px;
-    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #AEE2FF;
     border-radius: 5px;
     margin-bottom: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     display: block;
     margin: 0 auto;
+}
+
+
+.function-btn:hover {
+    background-color: #B799FF;
+}
+
+.function-btn.active {
+    background-color: #B799FF;
+    color: #fff;
+}
+
+.text {
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    fill: #000;
+}
+
+.function-btn-draw {
+    position: relative;
+    padding: 10px 15px;
+    background-color: #AEE2FF;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.function-btn-save {
+    position: relative;
+    padding: 10px 15px;
+    background-color: white;
+    border-radius: 5px;
+    color: #0075FF;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.function-btn-text {
+    position: relative;
+    padding: 15px 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background-color: #AEE2FF;
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.btn-group {
+    display: flex;
 }

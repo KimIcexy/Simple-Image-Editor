@@ -12,6 +12,65 @@ var undoHis = [];
 
 // CÁC NÚT ĐIỀU KHIỂN
 {
+    // Kéo thả ảnh vào canvas
+    var dropArea = document.getElementById('dropArea');
+    dropArea.addEventListener('dragover', preventDefault);
+    dropArea.addEventListener('drop', handleDrop);
+
+    // Chặn sự kiện mặc định là mở tab mới để hiện ảnh
+    function preventDefault(e) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        // Lấy ảnh từ sự kiện kéo và thả
+        var file = e.dataTransfer.files[0];
+        let fileType = file.type;
+
+        let validType = ['image/jpeg', 'image/jpg', 'image/png'];
+
+        if (validType.includes(fileType)) {
+            let fileReader = new FileReader();
+            fileReader.onload = function () {
+                let fileURL = fileReader.result;
+                let img = new Image();
+
+                img.onload = function () {
+                    var width = img.width;
+                    var height = img.height;
+
+                    // Tính toán kích thước mới dựa trên maxWidth và maxHeight
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+
+                    // Vẽ ảnh lên canvas
+                    canvas.width = width;
+                    canvas.height = height;
+                    context.drawImage(img, 0, 0, width, height);
+                    dropArea.style.display = "none";
+                    canvas.style.display = "block";
+
+                    // Đặt trạng thái gốc cho ảnh
+                    orgImg = context.getImageData(0, 0, canvas.width, canvas.height);
+                    editHis = [orgImg];
+                    redoHis = [];
+                };
+                img.src = fileURL;
+            }
+            fileReader.readAsDataURL(file);
+        }
+        else {
+            alert('Chỉ hỗ trợ tải ảnh có định dạng .jpeg, .jpg, .png');
+        }
+    }
+
     // Tải ảnh lên
     {
         var uploadBtn = document.getElementById('uploadBtn');
@@ -39,6 +98,7 @@ var undoHis = [];
                     canvas.width = width;
                     canvas.height = height;
                     context.drawImage(img, 0, 0, width, height);
+                    dropArea.style.display = "none";
                     canvas.style.display = "block";
 
                     // Đặt trạng thái gốc cho ảnh
@@ -145,7 +205,6 @@ var undoHis = [];
         var lightSlider = document.getElementById('lightSlider');
         lightSlider.addEventListener('change', function () {
             var data = editHis[editHis.length - 1].data;
-            console.log('edit length: ', editHis.length);
             var value = Number(lightSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {
@@ -179,7 +238,6 @@ var undoHis = [];
         lightSlider.value = 0;
         contrastSlider.va = 1;
         editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
-        console.log('save');
     }
 
     // Làm xám
@@ -359,7 +417,6 @@ var undoHis = [];
         function drawTextElements() {
             // Khôi phục ảnh trước khi thêm text
             context.clearRect(0, 0, canvas.width, canvas.height);
-            console.log(editHis.length);
             context.putImageData(editHis[editHis.length - 1], 0, 0);
 
             // Vẽ lại các text và khung chọn mới

@@ -43,6 +43,34 @@ body {
     top: 15vh;
 }
 
+#dropArea {
+    display: flex;
+    align-items: center;
+    margin: 10px auto;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    width: 800px;
+    height: 550px;
+    top: 15vh;
+    border: 3px dashed black;
+}
+
+#drop-text {
+    color: #0075FF;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#drop-btn {
+    margin-top: 1vh;
+    color: #0075FF;
+    position: absolute;
+    display: flex;
+    cursor: pointer;
+    left: 50%;
+}
+
 .sidebar {
     width: 15vw;
     padding: 10px;

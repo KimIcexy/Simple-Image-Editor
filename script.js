@@ -10,6 +10,7 @@ var editHis = [];
 // Lịch sử hoàn tác (dùng để redo - lặp lại)
 var undoHis = [];
 
+
 // CÁC NÚT ĐIỀU KHIỂN
 {
     // Kéo thả ảnh vào canvas

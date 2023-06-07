@@ -21,7 +21,143 @@ h1 {
         color: #0075FF;
     }
 }
+.tooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 25%;
+    transform: translateX(-50%);
+    padding: 5px;
+    background-color: white;
+    color: black;
+    font-size: 13px;
+    font-family: Arial, sans-serif; /* Chọn font chữ mong muốn */
+  }
+  #customUploadBtn:hover #tooltip {
+    display: block;
+  }
+  #resetTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 58%;
+  }
+  
+  .customBtn-control-reset:hover #resetTooltip {
+    display: block;
+  }
+  #downloadTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 90%;
+    white-space: nowrap; /* Ngăn chặn xuống dòng */
+    max-width: 150px; /* Giới hạn chiều rộng của chú thích */
+    text-overflow: ellipsis; /* Hiển thị dấu chấm ở cuối nếu chú thích quá dài */
+    overflow: hidden; /* Ẩn bớt nội dung chú thích nếu quá dài */
+  }
+  
+  .customBtn-control-upload:hover #downloadTooltip {
+    display: block;
+  }
+  
+  #undoTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 59%;
+  }
+  
+  .customBtn-control:hover #undoTooltip {
+    display: block;
+  }
+  #redoTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 90%;
+  }
+  
+  .customBtn-control:hover #redoTooltip {
+    display: block;
+  }
+  #cropTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+  }
+  
+  .function-btn:hover #cropTooltip {
+    display: block;
+  }
+  #rototeTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+  }
+  
+  .function-btn:hover #rototeTooltip {
+    display: block;
+  }
+  #flipTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+  }
+  
+  .function-btn:hover #flipTooltip {
+    display: block;
+  }
+  #saveTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+  }
+  
+  .function-btn-save:hover #saveTooltip {
+    display: block;
+  }
 
+  #writeTextTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    white-space: nowrap; /* Ngăn chặn xuống dòng */
+    max-width: 150px; /* Giới hạn chiều rộng của chú thích */
+    text-overflow: ellipsis; /* Hiển thị dấu chấm ở cuối nếu chú thích quá dài */
+    overflow: hidden; /* Ẩn bớt nội dung chú thích nếu quá dài */
+  }
+  
+  .function-btn-text:hover #writeTextTooltip {
+    display: block;
+  }
+  #deleteTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+  }
+  
+  .function-btn:hover #deleteTooltip {
+    display: block;
+  }
+  #drawTooltip {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 30%;
+  }
+  
+  .function-btn-draw:hover #drawTooltip {
+    display: block;
+  }
+  
+   
 body {
     display: flex;
     flex-direction: column;

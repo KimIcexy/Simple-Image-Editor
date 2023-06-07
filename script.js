@@ -197,7 +197,6 @@ var undoHis = [];
         blurSlider.addEventListener('change', function () {
             context.filter = `blur(${blurSlider.value}px)`;
             context.drawImage(canvas, 0, 0);
-            editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
         });
     }
 
@@ -205,7 +204,7 @@ var undoHis = [];
     {
         var lightSlider = document.getElementById('lightSlider');
         lightSlider.addEventListener('change', function () {
-            var data = editHis[editHis.length - 1].data;
+            var data = editHis[editHis.length - 1].data.slice()
             var value = Number(lightSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {
@@ -222,7 +221,7 @@ var undoHis = [];
     {
         var contrastSlider = document.getElementById('contrastSlider');
         contrastSlider.addEventListener('change', function () {
-            var data = editHis[editHis.length - 1].data;
+            var data = editHis[editHis.length - 1].data.slice();
             var value = Number(contrastSlider.value);
 
             for (let i = 0; i < data.length; i += 4) {
@@ -471,7 +470,7 @@ var undoHis = [];
 
         function updateTextScale() {
             var newTextScale = parseFloat(document.getElementById('fontSize').value) / 20;
-        
+
             // Cập nhật kích thước chữ được chọn
             if (selectedTextIndex !== -1) {
                 var selectedTextElement = textElements[selectedTextIndex];
@@ -479,10 +478,10 @@ var undoHis = [];
                 selectedTextScale = newTextScale;
                 selectedTextElement.fontSize *= deltaScale;
             }
-        
+
             drawTextElements();
         }
-        
+
 
         function handleText() {
             // Thêm chữ mới

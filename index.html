@@ -29,31 +29,31 @@
             <i class="gg-software-upload"></i>
             <span class="tooltip" id="tooltip">Tải ảnh lên</span>
         </label>
-          
+
         <input type="file" id="uploadBtn" accept="image/*" style="display:none;">
         <button id="resetBtn" class="customBtn-control-reset">
             <i class="gg-corner-double-up-left"></i>
             <span class="tooltip" id="resetTooltip">Khôi phục gốc</span>
         </button>
-          
+
         <button id="downloadBtn" class="customBtn-control customBtn-control-upload">
             <i class="gg-software-download"></i>
             <span class="tooltip" id="downloadTooltip">Tải về</span>
         </button>
-          
+
     </div>
     <div class="control" style="right: 25vw;">
         <button id="undoBtn" class="customBtn-control" style="margin-left: 10vw;">
             <i class="gg-undo"></i>
-            <span class="tooltip" id="undoTooltip">Undo</span>
-          </button>
-          
-          <button id="redoBtn" class="customBtn-control">
+            <span class="tooltip" id="undoTooltip">Hoàn tác</span>
+        </button>
+
+        <button id="redoBtn" class="customBtn-control">
             <i class="gg-redo"></i>
-            <span class="tooltip" id="redoTooltip">Redo</span>
-          </button>
-          
-          
+            <span class="tooltip" id="redoTooltip">Làm lại</span>
+        </button>
+
+
     </div>
 
     <div id="dropArea">
@@ -90,26 +90,26 @@
                         <button id="cropBtn" class="function-btn">
                             <i class="gg-crop"></i>
                             <span class="tooltip" id="cropTooltip">Cắt</span>
-                          </button><br>
-                          
-                          <button id="flipBtn" class="function-btn">
+                        </button><br>
+
+                        <button id="rotateBtn" class="function-btn">
                             <i class="gg-sync"></i>
                             <span class="tooltip" id="rototeTooltip">Xoay</span>
-                          </button><br>
-                          
-                          <button id="flipBtn" class="function-btn" style="margin-bottom: 5px;">
+                        </button><br>
+
+                        <button id="flipBtn" class="function-btn" style="margin-bottom: 5px;">
                             <i class="gg-edit-flip-h"></i>
                             <span class="tooltip" id="flipTooltip">Lật</span>
-                          </button>
-                          
+                        </button>
+
                     </div>
                     <br>
 
                     <button class="function-btn function-btn-save" style="margin-top: 7px;" onclick="saveAdjustments()">
                         <ion-icon name="save-outline"></ion-icon>
                         <span class="tooltip" id="saveTooltip">Lưu</span>
-                      </button>
-                      
+                    </button>
+
                 </div>
             </div>
         </div>
@@ -146,18 +146,18 @@
                         <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn function-btn-text" onclick="handleText()">
                             <i class="gg-pen"></i>
                             <span class="tooltip" id="writeTextTooltip">Viết chữ</span>
-                          </button>
-                          
-                          <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="deleteText()">
+                        </button>
+
+                        <button style="margin-top: 15px; margin-bottom: 15px;" class="function-btn" onclick="deleteText()">
                             <i class="gg-erase"></i>
                             <span class="tooltip" id="deleteTooltip">Xóa</span>
-                          </button>
-                          
+                        </button>
+
                     </div>
                     <button class="function-btn function-btn-save" style="margin-top: 7px;" onclick="saveText()">
                         <ion-icon name="save-outline"></ion-icon>
                         <span class="tooltip" id="saveTooltip">Lưu</span>
-                      </button>
+                    </button>
                 </div>
             </div>
         </div>
@@ -185,8 +185,8 @@
                         <button id="drawBtn" class="function-btn function-btn-draw" style="margin-top: 15px; margin-bottom: 15px;">
                             <ion-icon name="brush-outline"></ion-icon>
                             <span id="drawTooltip">Vẽ</span>
-                          </button>
-                          
+                        </button>
+
                         <button id="eraseBtn" class="function-btn" style="margin-top: 15px; margin-bottom: 15px;">
                             <i class="gg-erase"></i>
                             <span class="tooltip" id="deleteTooltip">Xóa</span>

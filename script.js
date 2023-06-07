@@ -318,7 +318,7 @@ var undoHis = [];
         var isDrawing;
         var drawBtn = document.getElementById("drawBtn");
         var colorInput = document.getElementById("drawColor");
-        var thicknessInput = document.getElementById("drawThickSelect");
+        var thicknessInput = document.getElementById("thickSelect");
 
         drawBtn.addEventListener("click", function () {
             canvas.removeEventListener("mousedown", startErasing);
@@ -326,6 +326,7 @@ var undoHis = [];
             canvas.addEventListener("mousemove", draw);
             canvas.addEventListener("mouseup", stopDrawing);
         });
+
         function startDrawing(e) {
             if (e.button === 0) {
                 isDrawing = true;

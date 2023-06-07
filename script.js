@@ -471,13 +471,14 @@ var undoHis = [];
 
         function updateTextScale() {
             var newTextScale = parseFloat(document.getElementById('fontSize').value) / 20;
-            var deltaScale = newTextScale / textScale;
-            textScale = newTextScale;
         
-            // Cập nhật kích thước chữ mới
-            textElements.forEach(function (textElement) {
-                textElement.fontSize *= deltaScale;
-            });
+            // Cập nhật kích thước chữ được chọn
+            if (selectedTextIndex !== -1) {
+                var selectedTextElement = textElements[selectedTextIndex];
+                var deltaScale = newTextScale / selectedTextScale;
+                selectedTextScale = newTextScale;
+                selectedTextElement.fontSize *= deltaScale;
+            }
         
             drawTextElements();
         }

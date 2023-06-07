@@ -470,9 +470,18 @@ var undoHis = [];
         }
 
         function updateTextScale() {
-            textScale = parseFloat(document.getElementById('fontSize').value) / 20;
+            var newTextScale = parseFloat(document.getElementById('fontSize').value) / 20;
+            var deltaScale = newTextScale / textScale;
+            textScale = newTextScale;
+        
+            // Cập nhật kích thước chữ mới
+            textElements.forEach(function (textElement) {
+                textElement.fontSize *= deltaScale;
+            });
+        
             drawTextElements();
         }
+        
 
         function handleText() {
             // Thêm chữ mới

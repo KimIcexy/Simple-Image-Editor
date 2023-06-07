@@ -111,14 +111,14 @@ h1 {
     display: block;
 }
 
-#rototeTooltip {
+#rotateTooltip {
     display: none;
     position: absolute;
     bottom: -30px;
     left: 50%;
 }
 
-.function-btn:hover #rototeTooltip {
+.function-btn:hover #rotateTooltip {
     display: block;
 }
 

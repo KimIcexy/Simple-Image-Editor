@@ -574,39 +574,37 @@ var undoHis = [];
     // THANH BÊN TRÁI
     // Xoay
     {
-        function RotateImage(degrees) {
-            var radians = degrees * Math.PI / 180;
+        function RotateImage() {
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            let { width, height, data } = imageData;
 
-            // Tạo một canvas tạm thời để chứa ảnh đã xoay
-            var tempCanvas = document.createElement("canvas");
-            var tempContext = tempCanvas.getContext("2d");
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
+            const rotateData = new Uint8ClampedArray(width * height * 4);
 
-            // Di chuyển tâm canvas về giữa --> xoay ảnh xung quanh tâm
-            tempContext.translate(canvas.width / 2, canvas.height / 2);
-            tempContext.rotate(radians);
+            // Xoay 90 độ
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const sourceIndex = (y * width + x) * 4;
+                    const targetIndex =
+                        (x * height + (height - y - 1)) * 4;
 
-            // Di chuyển tâm canvas trở lại vị trí ban đầu
-            tempContext.translate(-canvas.width / 2, -canvas.height / 2);
+                    rotateData[targetIndex] = data[sourceIndex];
+                    rotateData[targetIndex + 1] = data[sourceIndex + 1];
+                    rotateData[targetIndex + 2] = data[sourceIndex + 2];
+                    rotateData[targetIndex + 3] = data[sourceIndex + 3];
+                }
+            }
 
-            // Vẽ ảnh gốc lên canvas tạm
-            tempContext.drawImage(canvas, 0, 0);
-
-            // Xóa nội dung trên canvas cũ
             context.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Vẽ ảnh đã xoay từ canvas tạm lên canvas gốc
-            context.drawImage(tempCanvas, 0, 0);
+            canvas.width = height;
+            canvas.height = width;
+            var resImgData = new ImageData(rotateData, canvas.width, canvas.height);
+            context.putImageData(resImgData, 0, 0);
         }
 
         // Bắt sự kiện khi nhấn vào nút "Xoay ảnh"
         var rotateBtn = document.getElementById("rotateBtn");
         rotateBtn.addEventListener("click", function () {
-            var degrees = prompt("Nhập góc xoay (độ):");
-            if (degrees) {
-                RotateImage(parseFloat(degrees));
-            }
+            RotateImage();
         });
     }
 

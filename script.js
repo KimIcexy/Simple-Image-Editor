@@ -9,24 +9,24 @@ var orgImg = null;
 var editHis = [];
 // Lịch sử hoàn tác (dùng để redo - lặp lại)
 var undoHis = [];
+
+//Xử lý chuyển màu cho các buttom
 {
-// Lấy danh sách các button cần xử lý
-const buttons = document.querySelectorAll('.customBtn-control, .function-btn, .customBtn-control-reset');
+    // Lấy danh sách các button cần xử lý
+    const buttons = document.querySelectorAll('.customBtn-control, .function-btn, .customBtn-control-reset');
 
-// Thêm sự kiện click vào từng button
-buttons.forEach(button => {
-  button.addEventListener('click', () => {
-    // Xóa màu cố định của tất cả các button
-    buttons.forEach(btn => {
-      btn.classList.remove('selected');
+    // Thêm sự kiện click vào từng button
+    buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        // Xóa màu cố định của tất cả các button
+        buttons.forEach(btn => {
+        btn.classList.remove('selected');
+        });
+        
+        // Thêm màu cố định cho button được chọn
+        button.classList.add('selected');
     });
-    
-    // Thêm màu cố định cho button được chọn
-    button.classList.add('selected');
-  });
-});
-
-
+    });
 }
 
 // CÁC NÚT ĐIỀU KHIỂN

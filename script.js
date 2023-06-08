@@ -5,10 +5,13 @@ var context = canvas.getContext('2d');
 var img = context.getImageData(0, 0, canvas.width, canvas.height);
 // Ảnh gốc
 var orgImg = null;
+// Tên file gốc
+var orgName;
 // Lịch sử chỉnh sửa (dùng để undo - hoàn tác)
 var editHis = [];
 // Lịch sử hoàn tác (dùng để redo - lặp lại)
 var undoHis = [];
+
 
 //Xử lý chuyển màu cho các buttom
 {
@@ -17,86 +20,90 @@ var undoHis = [];
 
     // Thêm sự kiện click vào từng button
     buttons.forEach(button => {
-    button.addEventListener('click', () => {
-        // Xóa màu cố định của tất cả các button
-        buttons.forEach(btn => {
-        btn.classList.remove('selected');
+        button.addEventListener('click', () => {
+            // Xóa màu cố định của tất cả các button
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // Thêm màu cố định cho button được chọn
+            button.classList.add('selected');
         });
-        
-        // Thêm màu cố định cho button được chọn
-        button.classList.add('selected');
-    });
     });
 }
 
 // CÁC NÚT ĐIỀU KHIỂN
 {
-    // Kéo thả ảnh vào canvas
-    var dropArea = document.getElementById('dropArea');
-    dropArea.addEventListener('dragover', preventDefault);
-    dropArea.addEventListener('drop', handleDrop);
+    // Kéo thả để tải ảnh lên
+    {
+        var dropArea = document.getElementById('dropArea');
+        dropArea.addEventListener('dragover', preventDefault);
+        dropArea.addEventListener('drop', handleDrop);
 
-    // Chặn sự kiện mặc định là mở tab mới để hiện ảnh
-    function preventDefault(e) {
-        e.preventDefault();
-    }
+        // Chặn sự kiện mặc định là mở tab mới để hiện ảnh
+        function preventDefault(e) {
+            e.preventDefault();
+        }
 
-    function handleDrop(e) {
-        e.preventDefault();
-        // Lấy ảnh từ sự kiện kéo và thả
-        var file = e.dataTransfer.files[0];
-        let fileType = file.type;
+        function handleDrop(e) {
+            e.preventDefault();
+            // Lấy ảnh từ sự kiện kéo và thả
+            var file = e.dataTransfer.files[0];
+            let fileType = file.type;
+            orgName = file.name;
 
-        let validType = ['image/jpeg', 'image/jpg', 'image/png'];
+            let validType = ['image/jpeg', 'image/jpg', 'image/png'];
 
-        if (validType.includes(fileType)) {
-            let fileReader = new FileReader();
-            fileReader.onload = function () {
-                let fileURL = fileReader.result;
-                let img = new Image();
+            if (validType.includes(fileType)) {
+                let fileReader = new FileReader();
+                fileReader.onload = function () {
+                    let fileURL = fileReader.result;
+                    let img = new Image();
 
-                img.onload = function () {
-                    var width = img.width;
-                    var height = img.height;
+                    img.onload = function () {
+                        var width = img.width;
+                        var height = img.height;
 
-                    // Tính toán kích thước mới dựa trên maxWidth và maxHeight
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                    if (height > maxHeight) {
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
+                        // Tính toán kích thước mới dựa trên maxWidth và maxHeight
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
 
-                    // Vẽ ảnh lên canvas
-                    canvas.width = width;
-                    canvas.height = height;
-                    context.drawImage(img, 0, 0, width, height);
-                    dropArea.style.display = "none";
-                    canvas.style.display = "block";
+                        // Vẽ ảnh lên canvas
+                        canvas.width = width;
+                        canvas.height = height;
+                        context.drawImage(img, 0, 0, width, height);
+                        dropArea.style.display = "none";
+                        canvas.style.display = "block";
 
-                    // Đặt trạng thái gốc cho ảnh
-                    orgImg = context.getImageData(0, 0, canvas.width, canvas.height);
-                    editHis = [orgImg];
-                    redoHis = [];
-                };
-                img.src = fileURL;
+                        // Đặt trạng thái gốc cho ảnh
+                        orgImg = context.getImageData(0, 0, canvas.width, canvas.height);
+                        editHis = [orgImg];
+                        redoHis = [];
+                    };
+                    img.src = fileURL;
+                }
+                fileReader.readAsDataURL(file);
             }
-            fileReader.readAsDataURL(file);
-        }
-        else {
-            alert('Chỉ hỗ trợ tải ảnh có định dạng .jpeg, .jpg, .png');
+            else {
+                alert('Chỉ hỗ trợ tải ảnh có định dạng .jpeg, .jpg, .png');
+            }
         }
     }
 
-    // Tải ảnh lên
+    // Duyệt đường dẫn tải ảnh lên
     {
         var uploadBtn = document.getElementById('uploadBtn');
         uploadBtn.addEventListener('change', function (e) {
             var file = e.target.files[0];
             var reader = new FileReader();
-
+            orgName = file.name;
+            // orgName = uploadBtn.files[0].name;
             reader.onload = function (event) {
                 let img = new Image();
                 img.onload = function () {
@@ -131,7 +138,6 @@ var undoHis = [];
         });
     }
 
-
     // Tải ảnh về máy
     {
         var downloadBtn = document.getElementById('downloadBtn');
@@ -139,7 +145,7 @@ var undoHis = [];
             const dataURL = canvas.toDataURL();
             const a = document.createElement("a");
             a.href = dataURL;
-            const orgName = uploadBtn.files[0].name;
+
             var splitName = orgName.split('.');
             const editName = splitName[0] + "-edited." + splitName[1];
             a.download = editName;
@@ -169,8 +175,6 @@ var undoHis = [];
         });
     }
 
-
-
     // Lặp lại
     {
         var redoBtn = document.getElementById('redoBtn');
@@ -183,7 +187,6 @@ var undoHis = [];
             }
         });
     }
-
 
     // Khôi phục gốc
     {
@@ -208,7 +211,6 @@ var undoHis = [];
 
 // CÁC NÚT CHỨC NĂNG
 {
-
     // Làm trơn
     {
         // Lấy phần tử thanh trượt làm trơn bằng cách sử dụng ID của nó
@@ -266,7 +268,6 @@ var undoHis = [];
             context.putImageData(resImgData, 0, 0);
         });
     }
-
 
     // Chiếu sáng
     {
@@ -342,7 +343,6 @@ var undoHis = [];
             editHis.push(grayImgData);
         });
     }
-
 
     // Phát hiện biên cạnh
     {
@@ -654,7 +654,6 @@ var undoHis = [];
         }
     }
 
-    // THANH BÊN TRÁI
     // Xoay
     {
         function RotateImage() {

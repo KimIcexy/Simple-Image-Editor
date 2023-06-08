@@ -273,7 +273,7 @@ body {
 }
 
 .customBtn-control:hover {
-    background-color: #E6FFfD;
+    background-color: #acbcff;
 }
 
 .customBtn-control-upload {
@@ -295,7 +295,7 @@ body {
 }
 
 .customBtn-control-reset:hover {
-    background-color: #E6FFfD;
+    background-color: #acbcff;
 }
 
 /*GROUP*/
@@ -343,7 +343,7 @@ body {
 
 
 .function-btn:hover {
-    background-color: #E6FFfD;
+    background-color: #acbcff;
 }
 
 .function-btn.active {

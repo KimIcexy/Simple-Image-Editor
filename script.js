@@ -564,45 +564,46 @@ var undoHis = [];
             drawTextElements();
         }
 
+        function onMouseDownText(e) {
+            var x = e.offsetX;
+            var y = e.offsetY;
+
+            isDragging = false;
+            isResizing = false;
+            resizeIndex = -1;
+
+            isInsideText = false; // Reset trạng thái
+
+            // Kiểm tra xem chuột có nằm trong vùng chữ không
+            textElements.forEach(function (textElement, index) {
+                var textWidth = context.measureText(textElement.text).width;
+                var textHeight = textElement.fontSize * textScale;
+                if (
+                    x >= textElement.x &&
+                    x <= textElement.x + textWidth &&
+                    y >= textElement.y - textHeight &&
+                    y <= textElement.y
+                ) {
+                    selectedTextIndex = index;
+                    isDragging = true;
+                    startX = x;
+                    startY = y;
+                    isInsideText = true;
+                }
+            });
+
+            if (!isInsideText) {
+                selectedTextIndex = -1;
+            }
+
+            drawTextElements();
+        }
 
         function handleText() {
             // Thêm chữ mới
             addText();
 
-            canvas.addEventListener('mousedown', function (e) {
-                var x = e.offsetX;
-                var y = e.offsetY;
-
-                isDragging = false;
-                isResizing = false;
-                resizeIndex = -1;
-
-                isInsideText = false; // Reset trạng thái
-
-                // Kiểm tra xem chuột có nằm trong vùng chữ không
-                textElements.forEach(function (textElement, index) {
-                    var textWidth = context.measureText(textElement.text).width;
-                    var textHeight = textElement.fontSize * textScale;
-                    if (
-                        x >= textElement.x &&
-                        x <= textElement.x + textWidth &&
-                        y >= textElement.y - textHeight &&
-                        y <= textElement.y
-                    ) {
-                        selectedTextIndex = index;
-                        isDragging = true;
-                        startX = x;
-                        startY = y;
-                        isInsideText = true;
-                    }
-                });
-
-                if (!isInsideText) {
-                    selectedTextIndex = -1;
-                }
-
-                drawTextElements();
-            });
+            canvas.addEventListener('mousedown', onMouseDownText);
 
             canvas.addEventListener('mousemove', function (e) {
                 var x = e.offsetX;
@@ -649,7 +650,7 @@ var undoHis = [];
                 textElements = [];
                 editHis.push(context.getImageData(0, 0, canvas.width, canvas.height));
             }
-
+            canvas.removeEventListener('mousedown', onMouseDownText);
         }
     }
 

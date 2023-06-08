@@ -404,8 +404,7 @@ body {
 .btn-group {
     display: flex;
 }
+
 .selected {
-    background-color: yellowgreen;
-    /* Các thuộc tính CSS khác */
-  }
-  
+    background-color: #B799FF;
+}
